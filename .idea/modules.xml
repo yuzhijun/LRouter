@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/LRouter.iml" filepath="$PROJECT_DIR$/LRouter.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bussiness-module-a/bussiness-module-a.iml" filepath="$PROJECT_DIR$/bussiness-module-a/bussiness-module-a.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lrouter-api/lrouter-api.iml" filepath="$PROJECT_DIR$/lrouter-api/lrouter-api.iml" />
     </modules>
   </component>
 </project>
