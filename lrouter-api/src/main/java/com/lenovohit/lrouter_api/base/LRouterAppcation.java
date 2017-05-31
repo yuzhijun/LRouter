@@ -199,7 +199,7 @@ public abstract class LRouterAppcation extends Application{
         }
     }
 
-    public static LRouterAppcation getmInstance() {
+    public static LRouterAppcation getInstance() {
         return mInstance;
     }
 }
