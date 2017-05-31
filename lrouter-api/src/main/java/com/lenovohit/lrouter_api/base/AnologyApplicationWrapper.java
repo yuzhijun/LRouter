@@ -8,6 +8,7 @@ public class AnologyApplicationWrapper implements Comparable<AnologyApplicationW
     //类application初始化优先级
     public int priority = 0;
     public Class<? extends AnologyApplication> anologyApplicationClass = null;
+    public AnologyApplication instance;
 
     public AnologyApplicationWrapper(int priority, Class<? extends AnologyApplication> anologyApplicationClass) {
         this.priority = priority;
