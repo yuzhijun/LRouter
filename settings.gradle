@@ -1,1 +1,1 @@
-include ':app', ':lrouter-api', ':bussiness-module-a'
+include ':app', ':lrouter-api', ':bussiness-module-a', ':bussiness-module-b'

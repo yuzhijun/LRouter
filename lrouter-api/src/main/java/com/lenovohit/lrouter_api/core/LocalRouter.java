@@ -9,6 +9,8 @@ import android.os.IBinder;
 import com.lenovohit.lrouter_api.IRemoteRouterAIDL;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
 import com.lenovohit.lrouter_api.exception.LRException;
+import com.lenovohit.lrouter_api.utils.ILRLogger;
+import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
 import com.lenovohit.lrouter_api.utils.ProcessUtil;
 
 import java.util.HashMap;
@@ -23,11 +25,12 @@ import java.util.concurrent.Executors;
  * Created by yuzhijun on 2017/5/27.
  */
 public class LocalRouter {
+    private static final String TAG = "LocalRouter";
     private LRouterAppcation mLRouterAppcation;
     private static LocalRouter sInstance = null;
     private String mProcessName = ProcessUtil.UNKNOWN_PROCESS_NAME;
     private static ExecutorService threadPool = null;
-    //本地路由持有各个模块所有的provider
+    //本地路由持有各个模块所有的provider,可能有多个进程localRouter访问所以用ConcurrentHashMap
     private ConcurrentHashMap<String,LRProvider> mProviderHashmap = null;
     //用于跨进程访问远程路由
     private IRemoteRouterAIDL mRemoteRouterAIDL;
@@ -65,12 +68,30 @@ public class LocalRouter {
         mLRouterAppcation.bindService(bindRemoteRouterServiceIntent,mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
+    /**
+     * 切断与远程路由的连接
+     * */
     public void disconnectRemoteRouter() {
         if (null == mServiceConnection) {
             return;
         }
         mLRouterAppcation.unbindService(mServiceConnection);
         mRemoteRouterAIDL = null;
+    }
+
+    /**
+     * 关闭远程路由
+     * */
+    public void stopRemoteRouter(){
+        try{
+            if (checkRemoteRouterConnect()){
+                mRemoteRouterAIDL.stopRouter(RemoteRouter.PROCESS_NAME);
+            }else{
+                LRLoggerFactory.getLRLogger(TAG).log("远程路由已经断开了", ILRLogger.LogLevel.INFO);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -92,6 +113,9 @@ public class LocalRouter {
         mProviderHashmap.put(providerName, provider);
     }
 
+    /**
+     * 访问
+     * */
     public LRouterResponse navigation(Context context, LRouterRequest request) throws Exception {
         LRouterResponse routerResponse = new LRouterResponse();
         //如果当前进程等于请求的进程说明是在同个进程下则不需要跨进程访问
@@ -143,6 +167,7 @@ public class LocalRouter {
         return routerResponse;
     }
 
+    //检查远程服务是否连接
     private boolean checkRemoteRouterConnect(){
         boolean result = false;
         if (null != mRemoteRouterAIDL) {

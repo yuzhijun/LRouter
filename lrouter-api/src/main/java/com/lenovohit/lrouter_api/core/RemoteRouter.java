@@ -5,13 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.RemoteException;
+import android.text.TextUtils;
 
 import com.lenovohit.lrouter_api.ILocalRouterAIDL;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
 import com.lenovohit.lrouter_api.exception.LRException;
+import com.lenovohit.lrouter_api.utils.ILRLogger;
+import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
 import com.lenovohit.lrouter_api.utils.ProcessUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * 负责与LocalRouter进行数据交互
@@ -122,6 +128,75 @@ public class RemoteRouter {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 根据进程名来停止服务
+     * */
+    protected boolean stopRouterByProcessName(String processName){
+        try{
+            if (TextUtils.isEmpty(processName)){//如果传入的进程名为空则直接返回false
+                LRLoggerFactory.getLRLogger(TAG).log("停止服务时候进程名为空", ILRLogger.LogLevel.ERROR);
+                return false;
+            }else if(PROCESS_NAME.equals(processName)){//如果是当前远程路由的进程则说明是要停止远程路由
+                stopSelf();
+                return true;
+            }else if(null == mLocalRouterServiceConnectionHashMap.get(processName)){//如果服务未注册建议进行注册
+                LRLoggerFactory.getLRLogger(TAG).log("要停止的服务未注册："+processName, ILRLogger.LogLevel.ERROR);
+                return false;
+            }else{//如果是停止某一个本地路由服务则跨进程调用localrouter自己停止并从hashmap中删除
+                ILocalRouterAIDL aidl = mILocalRouterAIDLHashMap.get(processName);
+                if (null != aidl) {
+                    try {
+                        aidl.stopRemoteRouter();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //找到当前进程并从服务的hashmap中删除掉
+                mContext.unbindService(mLocalRouterServiceConnectionHashMap.get(processName));
+                mILocalRouterAIDLHashMap.remove(processName);
+                mLocalRouterServiceConnectionHashMap.remove(processName);
+                return true;
+            }
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    /**
+     * 停止当前的远程路由服务
+     * */
+    private void stopSelf(){
+        mStopping = true;//将停止标志置为true
+        new Thread(new Runnable() {//停止服务需要时间所以开启一个新的线程进行执行
+            @Override
+            public void run() {
+                List<String> locals = new ArrayList<>();
+                locals.addAll(mILocalRouterAIDLHashMap.keySet());
+                for (String processName : locals) {
+                    ILocalRouterAIDL aidl = mILocalRouterAIDLHashMap.get(processName);
+                    if (null != aidl) {
+                        try {
+                            aidl.stopRemoteRouter();
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        mContext.unbindService(mLocalRouterServiceConnectionHashMap.get(processName));
+                        mILocalRouterAIDLHashMap.remove(processName);
+                        mLocalRouterServiceConnectionHashMap.remove(processName);
+                    }
+                }
+                try {
+                    Thread.sleep(1000);
+                    mContext.stopService(new Intent(mContext, RemoteRouterService.class));
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.exit(0);
+            }
+        }).start();
     }
 
     /**

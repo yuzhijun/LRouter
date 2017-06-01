@@ -56,6 +56,10 @@ public class LocalRouterService extends Service {
             }
         }
 
-
+        @Override
+        public boolean stopRemoteRouter() throws RemoteException{
+            LocalRouter.getInstance(LRouterAppcation.getInstance()).disconnectRemoteRouter();
+            return true;
+        }
     };
 }

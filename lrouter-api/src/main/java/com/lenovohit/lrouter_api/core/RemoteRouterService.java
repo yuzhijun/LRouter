@@ -66,6 +66,9 @@ public class RemoteRouterService extends Service {
            }
         }
 
-
+        @Override
+       public boolean stopRouter(String processName) throws RemoteException{
+            return RemoteRouter.getInstance(LRouterAppcation.getInstance()).stopRouterByProcessName(processName);
+       }
     };
 }

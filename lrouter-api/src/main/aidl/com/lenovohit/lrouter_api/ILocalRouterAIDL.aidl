@@ -5,4 +5,5 @@ interface ILocalRouterAIDL {
     boolean checkIfLocalRouterAsync(String routerRequset);
     void connectRemoteRouter(String processName);
     String navigation(String routerRequest);
+     boolean stopRemoteRouter();
 }

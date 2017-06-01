@@ -54,8 +54,6 @@ public abstract class LRouterAppcation extends Application{
         }
     }
 
-
-
     private void initLocalRouter() {
         LocalRouter.getInstance(this);
         mAnologyApplicationHashMap = new HashMap<>();

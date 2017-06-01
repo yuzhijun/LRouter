@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/bussiness-module-a" />
+            <option value="$PROJECT_DIR$/bussiness-module-b" />
             <option value="$PROJECT_DIR$/lrouter-api" />
           </set>
         </option>
