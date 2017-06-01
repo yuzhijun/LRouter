@@ -34,9 +34,9 @@ public abstract class LRouterAppcation extends Application{
         mInstance = this;
         try{
             //启动新线程进行初始化避免加载等待时间过长
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
                     //初始化LocalRouter
                     initLocalRouter();
                     //注册所有的本地路由服务,主要是用于跨进程通讯
@@ -47,8 +47,8 @@ public abstract class LRouterAppcation extends Application{
                     setAnologyApplicaiton();
                     //调用各类application的生命周期onCreate
                     invokeOnCreate();
-                }
-            });
+//                }
+//            }).start();
         }catch (Exception e){
             LRLoggerFactory.getLRLogger(TAG).log("LRouterApplicaion初始化失败", ILRLogger.LogLevel.ERROR);
         }
@@ -62,7 +62,7 @@ public abstract class LRouterAppcation extends Application{
     private void initLocalRouterService() {
         //如果是允许多进程才需要注册框架类application类
         if (needMultipleProcess()){
-            registerAnologyApplication(LRouterAnologyApplication.class,LRouterAppcation.PROCESS_NAME,PRIORITY);
+            registerAnologyApplication(LRouterAppcation.PROCESS_NAME,PRIORITY,LRouterAnologyApplication.class);
         }
     }
 
@@ -71,7 +71,7 @@ public abstract class LRouterAppcation extends Application{
      * @return true 注册成功
      * @return false 已经注册
      * */
-    private boolean registerAnologyApplication(Class<? extends  AnologyApplication> anologyApplication,String processName,int priority){
+    protected boolean registerAnologyApplication(String processName,int priority,Class<? extends  AnologyApplication> anologyApplication){
         boolean result = false;
         if (null != mAnologyApplicationHashMap){
             ArrayList<AnologyApplicationWrapper> anologyApplicationWrappers = mAnologyApplicationHashMap.get(processName);
@@ -105,21 +105,27 @@ public abstract class LRouterAppcation extends Application{
         if (null != mAnologyApplicationHashMap){
             mAnologyApplications = mAnologyApplicationHashMap.get(ProcessUtil.getProcessName(this, ProcessUtil.getMyProcessId()));
         }
-
-        if (null != mAnologyApplications && mAnologyApplications.size() > 0){
-            try{
-                //根据优先级进行排序
-                Collections.sort(mAnologyApplications);
-                for (AnologyApplicationWrapper anologyApplicationWrapper : mAnologyApplications){
-                    anologyApplicationWrapper.instance = anologyApplicationWrapper.anologyApplicationClass.newInstance();
-                    if (null != anologyApplicationWrapper.instance){
-                        anologyApplicationWrapper.instance.setApplication(this);
+//        if (null == mAnologyApplicationHashMap){
+//            LRLoggerFactory.getLRLogger(TAG).log("没有类application注册到application里面", ILRLogger.LogLevel.ERROR);
+//            return;
+//        }
+//        for (Map.Entry<String,ArrayList<AnologyApplicationWrapper>> entry : mAnologyApplicationHashMap.entrySet()){
+//            mAnologyApplications = entry.getValue();
+            if (null != mAnologyApplications && mAnologyApplications.size() > 0){
+                try{
+                    //根据优先级进行排序
+                    Collections.sort(mAnologyApplications);
+                    for (AnologyApplicationWrapper anologyApplicationWrapper : mAnologyApplications){
+                        anologyApplicationWrapper.instance = anologyApplicationWrapper.anologyApplicationClass.newInstance();
+                        if (null != anologyApplicationWrapper.instance){
+                            anologyApplicationWrapper.instance.setApplication(this);
+                        }
                     }
+                }catch (Exception e){
+                    LRLoggerFactory.getLRLogger(TAG).log("设置类application的application实例失败", ILRLogger.LogLevel.ERROR);
                 }
-            }catch (Exception e){
-                LRLoggerFactory.getLRLogger(TAG).log("设置类application的application实例失败", ILRLogger.LogLevel.ERROR);
             }
-        }
+//        }
     }
 
     /**

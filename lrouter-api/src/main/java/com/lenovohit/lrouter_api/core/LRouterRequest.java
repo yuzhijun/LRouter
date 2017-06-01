@@ -140,6 +140,28 @@ public class LRouterRequest {
         return params;
     }
 
+    public LRouterRequest processName(String processName){
+        this.processName = processName;
+        return this;
+    }
+
+    public LRouterRequest provider(String provider) {
+        this.provider = provider;
+        return this;
+    }
+
+
+    public LRouterRequest action(String action) {
+        this.action = action;
+        return this;
+    }
+
+
+    public LRouterRequest param(String key, String data) {
+        this.params.put(key, data);
+        return this;
+    }
+
     public static class Builder{
         private String mProcessName;
         private String mAction;
@@ -196,7 +218,7 @@ public class LRouterRequest {
         }
 
 
-        public Builder data(String key, String data) {
+        public Builder param(String key, String data) {
             this.mParams.put(key, data);
             return this;
         }

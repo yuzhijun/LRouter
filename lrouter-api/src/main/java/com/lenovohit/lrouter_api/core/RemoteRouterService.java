@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.lenovohit.lrouter_api.IRemoteRouterAIDL;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
+import com.lenovohit.lrouter_api.exception.LRException;
 import com.lenovohit.lrouter_api.utils.ILRLogger;
 import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
 
@@ -15,9 +16,27 @@ import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
  * 远程路由服务
  * Created by yuzhijun on 2017/5/27.
  */
-public class RemoteRouterService extends Service {
+public final class RemoteRouterService extends Service {
     private static final String TAG = "RemoteRouterService";
     public static final String PROCESS_NAME = "process_name";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (!(getApplication() instanceof LRouterAppcation)) {
+            throw new LRException("请检查你的AndroidManifest.xml和applicaiton是LRouterApplicaiton");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return START_NOT_STICKY;
+    }
 
     @Nullable
     @Override

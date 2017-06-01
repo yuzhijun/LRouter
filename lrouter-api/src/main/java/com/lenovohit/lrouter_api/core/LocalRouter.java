@@ -19,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static android.content.Context.BIND_AUTO_CREATE;
+
 /**
  * 1.负责本地同进程module之间请求交互
  * 2.负责与RemoteRouter进行跨进程交互
@@ -46,7 +48,7 @@ public class LocalRouter {
 
     public static LocalRouter getInstance(LRouterAppcation context){
         if (sInstance == null){
-            synchronized (sInstance){
+            synchronized (LocalRouter.class){
                 if (sInstance == null){
                     sInstance = new LocalRouter(context);
                 }
@@ -65,7 +67,7 @@ public class LocalRouter {
     public void connect2RemoteRouter(String processName){
         Intent bindRemoteRouterServiceIntent = new Intent(mLRouterAppcation,RemoteRouterService.class);
         bindRemoteRouterServiceIntent.putExtra(RemoteRouterService.PROCESS_NAME,processName);
-        mLRouterAppcation.bindService(bindRemoteRouterServiceIntent,mServiceConnection, Context.BIND_AUTO_CREATE);
+        mLRouterAppcation.bindService(bindRemoteRouterServiceIntent,mServiceConnection, BIND_AUTO_CREATE);
     }
 
     /**
@@ -148,7 +150,7 @@ public class LocalRouter {
             String aidlTransportStr = request.toString();
             request.isIdle.set(true);
             //检查远程路由的服务是否连接上
-            if (!checkRemoteRouterConnect()){
+            if (checkRemoteRouterConnect()){
                 routerResponse.mAsync = mRemoteRouterAIDL.checkIfLocalRouterAsync(processName,aidlTransportStr);
             }else{//未连接上远程路由服务
                 routerResponse.mAsync = true;

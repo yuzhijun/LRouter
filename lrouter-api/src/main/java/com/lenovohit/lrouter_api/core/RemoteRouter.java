@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class RemoteRouter {
     private static final String TAG = "RemoteRouter";
-    public static final String PROCESS_NAME = "com.lenovohit.lrouter.RemoteRouter";
+    public static final String PROCESS_NAME = "com.lenovohit.yuzhijun.RemoteRouter";
     //远程路由是否停止标志
     boolean mStopping = false;
     private static RemoteRouter sInstance = null;
@@ -49,7 +49,7 @@ public class RemoteRouter {
 
     public static RemoteRouter getInstance(LRouterAppcation context){
         if (null == sInstance){
-            synchronized (sInstance){
+            synchronized (RemoteRouter.class){
                 if (null == sInstance){
                     sInstance = new RemoteRouter(context);
                 }
@@ -61,7 +61,7 @@ public class RemoteRouter {
     /**
      * 注册本地路由服务
      * */
-    public static void registerLocalRouterServiceConnection(Class<? extends LocalRouterService> localRouterServiceClazz,String processName){
+    public static void registerLocalRouterServiceConnection(String processName,Class<? extends LocalRouterService> localRouterServiceClazz){
         if (null == sLocalRouterClassesHashMap){
             sLocalRouterClassesHashMap = new HashMap<>();
         }
