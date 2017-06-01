@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.res.Configuration;
 
 import com.lenovohit.lrouter_api.core.LocalRouter;
+import com.lenovohit.lrouter_api.core.RemoteRouter;
 import com.lenovohit.lrouter_api.function.LRouterAnologyApplication;
 import com.lenovohit.lrouter_api.utils.ILRLogger;
 import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
@@ -19,7 +20,6 @@ import java.util.HashMap;
  */
 public abstract class LRouterAppcation extends Application{
     private static final String TAG = "LRouterApplicaton";
-    private static final String PROCESS_NAME = "com.lenovohit.lrouter.RemoteRouter";
     private static final int PRIORITY = 9999;//给框架的类application一个高优先级
     //保存application实例
     private static LRouterAppcation mInstance;
@@ -62,7 +62,7 @@ public abstract class LRouterAppcation extends Application{
     private void initLocalRouterService() {
         //如果是允许多进程才需要注册框架类application类
         if (needMultipleProcess()){
-            registerAnologyApplication(LRouterAppcation.PROCESS_NAME,PRIORITY,LRouterAnologyApplication.class);
+            registerAnologyApplication(RemoteRouter.PROCESS_NAME,PRIORITY,LRouterAnologyApplication.class);
         }
     }
 

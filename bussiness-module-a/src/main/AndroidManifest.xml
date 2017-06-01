@@ -6,7 +6,7 @@
                  android:supportsRtl="true">
         <activity android:name=".BussinessModuleActivity"
                 android:process=":moduleA"/>
-        <service android:name=".BusinessModuleServiceConnection"
+        <service android:name=".BusinessModuleAServiceConnection"
                  android:process=":moduleA"/>
     </application>
 

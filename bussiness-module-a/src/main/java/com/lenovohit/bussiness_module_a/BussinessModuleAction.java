@@ -2,7 +2,6 @@ package com.lenovohit.bussiness_module_a;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.lenovohit.lrouter_api.core.LRAction;
 import com.lenovohit.lrouter_api.core.LRActionResult;
@@ -16,7 +15,7 @@ import java.util.HashMap;
 public class BussinessModuleAction extends LRAction {
     @Override
     public boolean needAsync(Context context, HashMap<String, String> requestData) {
-        return true;
+        return false;
     }
 
     @Override
@@ -28,7 +27,6 @@ public class BussinessModuleAction extends LRAction {
         if(!TextUtils.isEmpty(requestData.get("2"))){
             temp+=requestData.get("2");
         }
-        Toast.makeText(context, "SyncAction.invoke:"+temp, Toast.LENGTH_SHORT).show();
         LRActionResult result = new LRActionResult.Builder()
                 .code(LRActionResult.RESULT_SUCESS)
                 .msg("success")

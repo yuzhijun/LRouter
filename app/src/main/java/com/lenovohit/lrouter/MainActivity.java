@@ -53,11 +53,12 @@ public class MainActivity extends AppCompatActivity {
                     final long startTime = System.currentTimeMillis();
                     final LRouterResponse response = LocalRouter.getInstance(LRouterAppcation.getInstance())
                             .navigation(MainActivity.this, LRouterRequest.getInstance(MainActivity.this)
-                                    .processName("com.lenovohit.bussiness_module_a:moduleA")
+                                    .processName("com.lenovohit.lrouter:moduleA")
                                     .provider("bussinessModuleA")
                                     .action("bussinessModuleA")
                                     .param("1", "Hello")
                                     .param("2", "Thread"));
+
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
-                    });
+                    }).start();
                 }catch (Exception e){
                     e.printStackTrace();
                 }

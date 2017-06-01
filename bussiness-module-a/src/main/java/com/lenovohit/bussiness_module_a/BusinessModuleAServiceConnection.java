@@ -6,5 +6,5 @@ import com.lenovohit.lrouter_api.core.LocalRouterService;
  * Created by yuzhijun on 2017/6/1.
  */
 
-public class BusinessModuleServiceConnection extends LocalRouterService {
+public class BusinessModuleAServiceConnection extends LocalRouterService {
 }
