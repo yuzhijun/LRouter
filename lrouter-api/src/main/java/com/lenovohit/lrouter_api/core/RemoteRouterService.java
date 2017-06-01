@@ -39,7 +39,7 @@ public class RemoteRouterService extends Service {
             return null;
         }
 
-        //连接本地路由并绑定服务进行跨进程访问
+        //连接本地路由并绑定服务进行跨进程访问，达到双向传输数据的效果
         RemoteRouter.getInstance(LRouterAppcation.getInstance()).connectLocalRouter(processName);
         return mStub;
     }
@@ -49,5 +49,23 @@ public class RemoteRouterService extends Service {
         public boolean checkIfLocalRouterAsync(String processName, String routerRequset) throws RemoteException {
             return RemoteRouter.getInstance(LRouterAppcation.getInstance()).checkIfLocalRouterAsync(processName,routerRequset);
         }
+
+        @Override
+        public String navigation(String processName,String routerRequest) throws RemoteException{
+           try{
+                return RemoteRouter.getInstance(LRouterAppcation.getInstance())
+                        .navigation(processName,routerRequest)
+                        .mActionResultStr;
+           }catch (Exception e){
+                e.printStackTrace();
+               return new LRActionResult.Builder()
+                       .code(LRActionResult.RESULT_ERROR)
+                       .msg(e.getMessage())
+                       .build()
+                       .toString();
+           }
+        }
+
+
     };
 }

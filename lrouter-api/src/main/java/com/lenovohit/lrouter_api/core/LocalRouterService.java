@@ -39,5 +39,23 @@ public class LocalRouterService extends Service {
         public void connectRemoteRouter(String processName) throws RemoteException {
             LocalRouter.getInstance(LRouterAppcation.getInstance()).connect2RemoteRouter(processName);
         }
+
+        @Override
+        public String navigation(String routerRequest) throws RemoteException{
+            try {
+                LocalRouter localRouter = LocalRouter.getInstance(LRouterAppcation.getInstance());
+                LRouterRequest lRouterRequest = new LRouterRequest
+                        .Builder(getApplicationContext())
+                        .json(routerRequest)
+                        .build();
+                LRouterResponse routerResponse = localRouter.navigation(LocalRouterService.this,lRouterRequest);
+                return routerResponse.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new LRActionResult.Builder().msg(e.getMessage()).build().toString();
+            }
+        }
+
+
     };
 }

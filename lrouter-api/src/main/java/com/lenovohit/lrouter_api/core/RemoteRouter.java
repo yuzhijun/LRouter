@@ -101,7 +101,7 @@ public class RemoteRouter {
                 public void onServiceConnected(ComponentName name, IBinder service) {
                     ILocalRouterAIDL localRouterAIDL = ILocalRouterAIDL.Stub.asInterface(service);
                     ILocalRouterAIDL tempLocalRouterAIDL = mILocalRouterAIDLHashMap.get(processName);
-                    if (null == tempLocalRouterAIDL){
+                    if (null == tempLocalRouterAIDL){//如果绑定的本地路由还未在hashmap中则添加
                         mILocalRouterAIDLHashMap.put(processName, localRouterAIDL);
                         mLocalRouterServiceConnectionHashMap.put(processName, this);
                         try{
@@ -136,11 +136,7 @@ public class RemoteRouter {
             }
 
             Class<? extends LocalRouterService> clazz = localRouterServiceWrapper.targetClass;
-            if (null == clazz){
-                return false;
-            }else{
-                return true;
-            }
+            return null != clazz;
         }else{
             try{
                return  target.checkIfLocalRouterAsync(requestData);
@@ -148,6 +144,84 @@ public class RemoteRouter {
                 return false;
             }
         }
+    }
+
+    /**
+     * 通过进程名查找访问那个本地路由服务,查找到则调用，完成跨进程通讯
+     * */
+    public LRouterResponse navigation(String processName,String requestStr) {
+        LRouterResponse routerResponse = new LRouterResponse();
+
+        if (mStopping) {//如果远程服务已经停止
+            LRActionResult result = new LRActionResult.Builder()
+                    .code(LRActionResult.RESULT_REMOTE_STOPPING)
+                    .msg("远程路由已经停止")
+                    .build();
+            routerResponse.mAsync = true;
+            routerResponse.mActionResultStr = result.toString();
+            return routerResponse;
+        }
+
+        if (PROCESS_NAME.equals(processName)) {//不能访问远程路由的进程
+            LRActionResult result = new LRActionResult.Builder()
+                    .code(LRActionResult.RESULT_TARGET_IS_REMOTE)
+                    .msg("访问的进程" + PROCESS_NAME + "是远程路由的进程")
+                    .build();
+            routerResponse.mAsync = true;
+            routerResponse.mActionResultStr = result.toString();
+            return routerResponse;
+        }
+
+        ILocalRouterAIDL localRouterAIDL = mILocalRouterAIDLHashMap.get(processName);
+        if (null == localRouterAIDL) {
+            if (!connectLocalRouter(processName)) {//如果hashmap中没有则尝试重新连接,如果失败则返回错误
+                LRActionResult result = new LRActionResult.Builder()
+                        .code(LRActionResult.RESULT_ROUTER_NOT_REGISTER)
+                        .msg("路由是否未注册,请先注册")
+                        .build();
+                routerResponse.mAsync = true;
+                routerResponse.mActionResultStr = result.toString();
+                return routerResponse;
+            } else {//否则连接成功则等待服务启动完毕
+                int time = 0;
+                while (true) {
+                    localRouterAIDL = mILocalRouterAIDLHashMap.get(processName);
+                    if (null == localRouterAIDL) {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        time++;
+                    } else {
+                        break;
+                    }
+                    if (time >= 600) {//如果超时则视为错误
+                        LRActionResult result = new LRActionResult.Builder()
+                                .code(LRActionResult.RESULT_CANNOT_BIND_LOCAL)
+                                .msg("未能成功绑定本地路由服务")
+                                .build();
+                        routerResponse.mAsync = true;
+                        routerResponse.mActionResultStr = result.toString();
+                        return routerResponse;
+                    }
+                }
+            }
+        }
+        //如果本地路由连接正常则访问
+        try{
+            String resultString = localRouterAIDL.navigation(requestStr);
+            routerResponse.mActionResultStr = resultString;
+        }catch (Exception e){
+            e.printStackTrace();
+            LRActionResult result = new LRActionResult.Builder()
+                    .code(LRActionResult.RESULT_REMOTE_LOCAL_ERROR)
+                    .msg("远程路由和本地路由通讯失败")
+                    .build();
+            routerResponse.mAsync = true;
+            routerResponse.mActionResultStr = result.toString();
+        }
+        return routerResponse;
     }
 
 

@@ -128,11 +128,18 @@ public class LocalRouter {
                 routerResponse.mAsync = mRemoteRouterAIDL.checkIfLocalRouterAsync(processName,aidlTransportStr);
             }else{//未连接上远程路由服务
                 routerResponse.mAsync = true;
+                ConnectRemoteTask task = new ConnectRemoteTask(routerResponse, processName, aidlTransportStr);
+                routerResponse.mAsyncResponse = getThreadPool().submit(task);
+                return routerResponse;
+            }
 
+            if (!routerResponse.mAsync){//如果不是异步访问则直接调用
+                routerResponse.mActionResultStr = mRemoteRouterAIDL.navigation(processName,aidlTransportStr);
+            }else{
+                RemoteTask task = new RemoteTask(processName, aidlTransportStr);
+                routerResponse.mAsyncResponse = getThreadPool().submit(task);
             }
         }
-
-
         return routerResponse;
     }
 
@@ -188,7 +195,7 @@ public class LocalRouter {
             }
         }
     }
-
+    //-----------------------------------------------------------------------------------------------------------------------------
     //本地异步任务
     private class LocalTask implements Callable<String> {
 
@@ -208,6 +215,63 @@ public class LocalRouter {
         public String call() throws Exception {
             LRActionResult actionResult = mAction.invoke(mContext,mRequestData);
             return actionResult.toString();
+        }
+    }
+
+    //远程异步服务
+    private class RemoteTask implements Callable<String>{
+        private String processName;
+        private String requestStr;
+        public RemoteTask(String processName,String requestStr){
+            this.processName = processName;
+            this.requestStr = requestStr;
+        }
+
+        @Override
+        public String call() throws Exception {
+            String result = mRemoteRouterAIDL.navigation(processName, requestStr);
+            return result;
+        }
+    }
+
+    //异步启动远程路由服务并访问
+    private class ConnectRemoteTask implements Callable<String> {
+        private String processName;
+        private String requestStr;
+        private LRouterResponse response;
+
+        public ConnectRemoteTask(LRouterResponse response,String processName,String requestStr){
+            this.processName = processName;
+            this.response = response;
+            this.requestStr = requestStr;
+        }
+
+        @Override
+        public String call() throws Exception {
+            //连接远程路由服务
+            connect2RemoteRouter(processName);
+
+            int time = 0;
+            while (true){
+                if (null == mRemoteRouterAIDL) {
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    time++;
+                } else {
+                    break;
+                }
+                if (time >= 600) {//如果超时则视为错误
+                    ErrorAction defaultNotFoundAction = new ErrorAction(true, LRActionResult.RESULT_CANNOT_BIND_REMOTE, "绑定远程服务超时");
+                    LRActionResult result = defaultNotFoundAction.invoke(mLRouterAppcation, new HashMap<String, String>());
+                    response.mActionResultStr = result.toString();
+                    return result.toString();
+                }
+            }
+            String result = mRemoteRouterAIDL.navigation(processName, requestStr);
+            return result;
         }
     }
 

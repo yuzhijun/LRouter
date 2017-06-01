@@ -11,6 +11,12 @@ public class LRActionResult {
     public static final int RESULT_ERROR = 0x0000;//错误码
     public static final int RESULT_SUCESS = 0x0001;//成功码
     public static final int ACTION_NOT_FOUND = 0x0002;//action未找到
+    public static final int RESULT_REMOTE_STOPPING = 0x0003;//远程路由已经停止
+    public static final int RESULT_TARGET_IS_REMOTE = 0x0004;//访问的是远程路由的进程
+    public static final int RESULT_ROUTER_NOT_REGISTER = 0x0005;//路由未注册
+    public static final int RESULT_CANNOT_BIND_LOCAL = 0x0006;//本地路由未能绑定成功
+    public static final int RESULT_CANNOT_BIND_REMOTE = 0x0007;//远程路由不能绑定成功
+    public static final int RESULT_REMOTE_LOCAL_ERROR = 0x0008;//远程路由和本地路由通讯失败
 
     private int code;
     private String msg;
