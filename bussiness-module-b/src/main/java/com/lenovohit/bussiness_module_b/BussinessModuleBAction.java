@@ -12,7 +12,7 @@ import java.util.HashMap;
 /**
  * Created by yuzhijun on 2017/6/2.
  */
-@Action(name = "ModuleBAction",provider = "BussinessModuleBProvider")
+@Action(name = "ModuleBAction",provider = "com.lenovohit.bussiness_module_b.BussinessModuleBProvider")
 public class BussinessModuleBAction extends LRAction {
     @Override
     public boolean needAsync(Context context, HashMap<String, String> requestData) {

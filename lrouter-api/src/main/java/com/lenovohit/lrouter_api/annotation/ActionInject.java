@@ -29,9 +29,10 @@ public class ActionInject {
                 String provider = action.provider();
                 //对provider进行实例化
                 Class<? extends LRProvider> providerClazz = (Class<? extends LRProvider>) Class.forName(provider);
-                //进行调用,因为provider是抽象类所以调用不到,需要用反射调用
-                Method method = providerClazz.getMethod(REGISTER_ACTION,String.class,clazz);
-                method.invoke(providerClazz.newInstance(),name,action);
+                //进行调用
+                Method method = providerClazz.getMethod(REGISTER_ACTION,String.class,LRAction.class);
+                method.setAccessible(true);
+                method.invoke(providerClazz.newInstance(),name,lrAction);
             }
         }catch (Exception e){
             e.printStackTrace();

@@ -19,7 +19,7 @@ public abstract class LRProvider {
         registerActions();
     }
 
-    protected void registerAction(String actionName,LRAction action){
+    public void registerAction(String actionName,LRAction action){
         mActions.put(actionName,action);
     }
 

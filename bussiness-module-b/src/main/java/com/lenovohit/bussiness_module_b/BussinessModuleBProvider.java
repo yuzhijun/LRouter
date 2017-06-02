@@ -1,6 +1,7 @@
 package com.lenovohit.bussiness_module_b;
 
 import com.lenovohit.lrouter_api.annotation.Provider;
+import com.lenovohit.lrouter_api.core.LRAction;
 import com.lenovohit.lrouter_api.core.LRProvider;
 
 /**
@@ -11,5 +12,10 @@ public class BussinessModuleBProvider extends LRProvider {
     @Override
     protected void registerActions() {
 
+    }
+
+    @Override
+    public void registerAction(String actionName, LRAction action) {
+        super.registerAction(actionName, action);
     }
 }

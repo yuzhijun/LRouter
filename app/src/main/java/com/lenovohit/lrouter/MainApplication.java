@@ -1,7 +1,8 @@
 package com.lenovohit.lrouter;
 
-import com.lenovohit.bussiness_module_a.BusinessModuleAnologyApplication;
 import com.lenovohit.bussiness_module_a.BusinessModuleAServiceConnection;
+import com.lenovohit.bussiness_module_a.BusinessModuleAnologyApplication;
+import com.lenovohit.bussiness_module_b.BusinessModuleBAnologyApplication;
 import com.lenovohit.bussiness_module_b.BussinessModuleBServiceConnection;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
 import com.lenovohit.lrouter_api.core.RemoteRouter;
@@ -22,6 +23,7 @@ public class MainApplication extends LRouterAppcation {
     protected void regiterAnologyApplication() {//将类application类注册进Application内
         registerAnologyApplication("com.lenovohit.lrouter",999,MainAnologyApplication.class);
         registerAnologyApplication("com.lenovohit.lrouter:moduleA",998, BusinessModuleAnologyApplication.class);
+        registerAnologyApplication("com.lenovohit.lrouter:moduleB",997, BusinessModuleBAnologyApplication.class);
     }
 
     @Override
