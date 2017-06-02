@@ -5,7 +5,6 @@ import com.lenovohit.lrouter_api.core.LRProvider;
 /**
  * Created by yuzhijun on 2017/6/1.
  */
-
 public class BussinessModuleProvider extends LRProvider {
     @Override
     protected void registerActions() {

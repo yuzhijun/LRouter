@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button button1;
     private Button button2;
+    private Button button3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
+        button3 = (Button) findViewById(R.id.button3);
 
         initEvent();
     }
@@ -58,6 +60,46 @@ public class MainActivity extends AppCompatActivity {
                                     .action("bussinessModuleA")
                                     .param("1", "Hello")
                                     .param("2", "Thread"));
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try{
+                                final String temp = response.getData();
+                                final long time = System.currentTimeMillis() - startTime;
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Toast.makeText(MainActivity.this, "async:" + response.isAsync() + " cost:" + time + " response:" + response.get(), Toast.LENGTH_SHORT).show();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try{
+                    final long startTime = System.currentTimeMillis();
+                    final LRouterResponse response = LocalRouter.getInstance(LRouterAppcation.getInstance())
+                            .navigation(MainActivity.this, LRouterRequest.getInstance(MainActivity.this)
+                                    .processName("com.lenovohit.lrouter:moduleB")
+                                    .provider("ModuleBProvider")
+                                    .action("ModuleBAction")
+                                    .param("1", "Hello")
+                                    .param("2", "Annotation"));
 
                     new Thread(new Runnable() {
                         @Override

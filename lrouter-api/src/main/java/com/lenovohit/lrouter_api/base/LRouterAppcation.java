@@ -105,12 +105,6 @@ public abstract class LRouterAppcation extends Application{
         if (null != mAnologyApplicationHashMap){
             mAnologyApplications = mAnologyApplicationHashMap.get(ProcessUtil.getProcessName(this, ProcessUtil.getMyProcessId()));
         }
-//        if (null == mAnologyApplicationHashMap){
-//            LRLoggerFactory.getLRLogger(TAG).log("没有类application注册到application里面", ILRLogger.LogLevel.ERROR);
-//            return;
-//        }
-//        for (Map.Entry<String,ArrayList<AnologyApplicationWrapper>> entry : mAnologyApplicationHashMap.entrySet()){
-//            mAnologyApplications = entry.getValue();
             if (null != mAnologyApplications && mAnologyApplications.size() > 0){
                 try{
                     //根据优先级进行排序
@@ -125,7 +119,6 @@ public abstract class LRouterAppcation extends Application{
                     LRLoggerFactory.getLRLogger(TAG).log("设置类application的application实例失败", ILRLogger.LogLevel.ERROR);
                 }
             }
-//        }
     }
 
     /**

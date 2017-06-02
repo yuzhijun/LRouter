@@ -1,5 +1,7 @@
 package com.lenovohit.lrouter_api.core;
 
+import com.lenovohit.lrouter_api.annotation.ProviderInject;
+
 import java.util.HashMap;
 
 /**
@@ -12,6 +14,7 @@ public abstract class LRProvider {
     private HashMap<String,LRAction> mActions;
 
     public LRProvider(){
+        ProviderInject.injectProvider(this);
         mActions = new HashMap<>();
         registerActions();
     }
