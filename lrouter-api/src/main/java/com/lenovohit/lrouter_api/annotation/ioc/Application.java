@@ -1,4 +1,4 @@
-package com.lenovohit.lrouter_api.annotation;
+package com.lenovohit.lrouter_api.annotation.ioc;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Action {
+public @interface Application {
     String name();
-    String provider();
+    int priority();
 }

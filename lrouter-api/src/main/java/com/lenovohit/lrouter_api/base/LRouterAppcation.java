@@ -71,7 +71,7 @@ public abstract class LRouterAppcation extends Application{
      * @return true 注册成功
      * @return false 已经注册
      * */
-    protected boolean registerAnologyApplication(String processName,int priority,Class<? extends  AnologyApplication> anologyApplication){
+    public boolean registerAnologyApplication(String processName,int priority,Class<? extends  AnologyApplication> anologyApplication){
         boolean result = false;
         if (null != mAnologyApplicationHashMap){
             ArrayList<AnologyApplicationWrapper> anologyApplicationWrappers = mAnologyApplicationHashMap.get(processName);
