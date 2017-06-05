@@ -14,5 +14,6 @@ public class MainAnologyApplication extends AnologyApplication {
 //        LocalRouter.getInstance(mApplication).registerProvider("main",new MainProvider());
         new MainProvider();
         new MainAction();
+        new AppInterceptor();
     }
 }

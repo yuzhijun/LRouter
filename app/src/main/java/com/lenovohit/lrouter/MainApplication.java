@@ -7,7 +7,6 @@ import com.lenovohit.bussiness_module_b.BussinessModuleBServiceConnection;
 import com.lenovohit.lrouter_api.annotation.ApplicationInject;
 import com.lenovohit.lrouter_api.annotation.ServiceInject;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
-import com.lenovohit.lrouter_api.intercept.RequstAspect;
 
 /**
  * 程序的application
@@ -17,7 +16,6 @@ public class MainApplication extends LRouterAppcation {
     @Override
     public void onCreate() {
         super.onCreate();
-        RequstAspect.interceptorInject(new Interceptor());
     }
 
     @Override
