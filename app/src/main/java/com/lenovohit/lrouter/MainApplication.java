@@ -7,12 +7,19 @@ import com.lenovohit.bussiness_module_b.BussinessModuleBServiceConnection;
 import com.lenovohit.lrouter_api.annotation.ApplicationInject;
 import com.lenovohit.lrouter_api.annotation.ServiceInject;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
+import com.lenovohit.lrouter_api.intercept.RequstAspect;
 
 /**
  * 程序的application
  * Created by yuzhijun on 2017/5/27.
  */
 public class MainApplication extends LRouterAppcation {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        RequstAspect.interceptorInject(new Interceptor());
+    }
+
     @Override
     public void regiterLocalRouterService() {//将本地路由服务进行注册进远程路由内
 //        RemoteRouter.registerLocalRouterServiceConnection("com.lenovohit.lrouter",MainRouterConnectService.class);

@@ -1,9 +1,11 @@
 package com.lenovohit.lrouter_api.intercept;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.CodeSignature;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,6 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Aspect
 public class RequstAspect {
+    private static AopInterceptor mAopInterceptor;
     //筛选出用Navigation注解的所有方法
     private static final String POINTCUT_METHOD = "execution(@com.lenovohit.lrouter_api.intercept.ioc.Navigation * *(..))";
     //筛选出所有用Navigation注解的所有构造函数
@@ -27,15 +30,49 @@ public class RequstAspect {
     @Around("methodAnnotationWithNavigation() || constructorAnnotaionWithNavigation()")
     public Object requestAndExecute(ProceedingJoinPoint joinPoint) throws Throwable{
         //执行方法前
-        AopInterceptor.enterMethod(joinPoint);
+        enterRequestMethod(joinPoint);
         //方法执行
         long startNanos = System.nanoTime();
         Object result = joinPoint.proceed();
         long stopNanos = System.nanoTime();
         long lengthMillis = TimeUnit.NANOSECONDS.toMillis(stopNanos - startNanos);
         //执行方法后
-        AopInterceptor.exitMethod(joinPoint,lengthMillis);
+        exitRequestMethod(joinPoint,lengthMillis);
 
         return result;
+    }
+
+    public static void interceptorInject(AopInterceptor interceptor){
+        mAopInterceptor = interceptor;
+    }
+
+    /**
+     * 进入请求方法前
+     * */
+    public  void enterRequestMethod(JoinPoint joinPoint){
+        CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
+
+        String methodName = codeSignature.getName();
+        String[] parameterNames = codeSignature.getParameterNames();
+        Object[] parameterValues = joinPoint.getArgs();
+
+        if (null != mAopInterceptor) {
+            mAopInterceptor.enterRequestIntercept(methodName, parameterNames, parameterValues);
+        }
+    }
+
+    /**
+     * 执行完请求方法后
+     * */
+    public  void exitRequestMethod(JoinPoint joinPoint, long lengthMillis){
+        CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
+
+        String methodName = codeSignature.getName();
+        String[] parameterNames = codeSignature.getParameterNames();
+        Object[] parameterValues = joinPoint.getArgs();
+
+        if (null != mAopInterceptor){
+            mAopInterceptor.exitRequestIntercept(methodName,parameterNames,parameterValues,lengthMillis);
+        }
     }
 }
