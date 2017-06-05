@@ -9,6 +9,7 @@ import android.os.IBinder;
 import com.lenovohit.lrouter_api.IRemoteRouterAIDL;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
 import com.lenovohit.lrouter_api.exception.LRException;
+import com.lenovohit.lrouter_api.intercept.ioc.Navigation;
 import com.lenovohit.lrouter_api.utils.ILRLogger;
 import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
 import com.lenovohit.lrouter_api.utils.ProcessUtil;
@@ -118,6 +119,7 @@ public class LocalRouter {
     /**
      * 访问
      * */
+    @Navigation
     public LRouterResponse navigation(Context context, LRouterRequest request) throws Exception {
         LRouterResponse routerResponse = new LRouterResponse();
         //如果当前进程等于请求的进程说明是在同个进程下则不需要跨进程访问

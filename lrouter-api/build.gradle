@@ -1,4 +1,18 @@
+import com.android.build.gradle.LibraryPlugin
+import org.aspectj.bridge.IMessage
+import org.aspectj.bridge.MessageHandler
+import org.aspectj.tools.ajc.Main
+
 apply plugin: 'com.android.library'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'org.aspectj:aspectjtools:1.8.1'
+    }
+}
 
 android {
     compileSdkVersion 25
@@ -21,11 +35,52 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
-    testCompile 'junit:junit:4.12'
+    compile 'org.aspectj:aspectjrt:1.8.1'
+}
+
+android.libraryVariants.all { variant ->
+    LibraryPlugin plugin = project.plugins.getPlugin(LibraryPlugin)
+    JavaCompile javaCompile = variant.javaCompile
+    javaCompile.doLast {
+        String[] args = [
+                "-showWeaveInfo",
+                "-1.5",
+                "-inpath", javaCompile.destinationDir.toString(),
+                "-aspectpath", javaCompile.classpath.asPath,
+                "-d", javaCompile.destinationDir.toString(),
+                "-classpath", javaCompile.classpath.asPath,
+                "-bootclasspath", android.bootClasspath.join(File.pathSeparator)
+        ]
+
+        MessageHandler handler = new MessageHandler(true);
+        new Main().run(args, handler)
+
+        def log = project.logger
+        for (IMessage message : handler.getMessages(null, true)) {
+            switch (message.getKind()) {
+                case IMessage.ABORT:
+                case IMessage.ERROR:
+                case IMessage.FAIL:
+                    log.error message.message, message.thrown
+                    break;
+                case IMessage.WARNING:
+                case IMessage.INFO:
+                    log.info message.message, message.thrown
+                    break;
+                case IMessage.DEBUG:
+                    log.debug message.message, message.thrown
+                    break;
+            }
+        }
+    }
 }
