@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.HashMap;
 public class ErrorAction extends LRAction {
 
-    private static final String DEFAULT_MESSAGE = "Something was really wrong. Ha ha!";
+    private static final String DEFAULT_MESSAGE = "出现错误啦,请紧急抢修!";
     private int mCode;
     private String mMessage;
     private boolean mAsync;

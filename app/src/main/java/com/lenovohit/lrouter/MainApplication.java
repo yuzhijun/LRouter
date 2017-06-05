@@ -13,10 +13,6 @@ import com.lenovohit.lrouter_api.base.LRouterAppcation;
  * Created by yuzhijun on 2017/5/27.
  */
 public class MainApplication extends LRouterAppcation {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
 
     @Override
     public void regiterLocalRouterService() {//将本地路由服务进行注册进远程路由内
