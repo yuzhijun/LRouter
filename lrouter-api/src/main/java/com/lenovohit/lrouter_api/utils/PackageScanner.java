@@ -50,7 +50,7 @@ public class PackageScanner {
                 Collections.sort(clazzs);
                 for (int i = 0; i < clazzs.size(); i ++){
                     InjectorPriorityWrapper clazz = clazzs.get(i);
-                    Object object = clazz.mClass.newInstance();
+                    clazz.mClass.newInstance();
                 }
             }
         }catch (Exception e){

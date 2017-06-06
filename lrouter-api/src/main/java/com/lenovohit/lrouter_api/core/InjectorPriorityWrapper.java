@@ -13,6 +13,7 @@ public class InjectorPriorityWrapper implements Comparable<InjectorPriorityWrapp
 
     public int mPrority = 0;
     public Class<?> mClass = null;
+    public Object instance = null;
 
     public InjectorPriorityWrapper(int priority,Class<?> clazz){
         this.mPrority = priority;
