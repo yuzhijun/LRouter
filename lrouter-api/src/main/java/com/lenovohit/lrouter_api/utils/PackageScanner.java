@@ -2,10 +2,16 @@ package com.lenovohit.lrouter_api.utils;
 
 import android.content.Context;
 
+import com.lenovohit.lrouter_api.annotation.ApplicationInject;
+import com.lenovohit.lrouter_api.annotation.ServiceInject;
 import com.lenovohit.lrouter_api.annotation.ioc.Action;
+import com.lenovohit.lrouter_api.annotation.ioc.Application;
 import com.lenovohit.lrouter_api.annotation.ioc.Interceptor;
 import com.lenovohit.lrouter_api.annotation.ioc.Provider;
+import com.lenovohit.lrouter_api.annotation.ioc.Service;
+import com.lenovohit.lrouter_api.base.AnologyApplication;
 import com.lenovohit.lrouter_api.core.InjectorPriorityWrapper;
+import com.lenovohit.lrouter_api.core.LocalRouterService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +47,10 @@ public class PackageScanner {
                         clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.ACTION_PRIORITY,entryClass));
                     }else if( null != entryClass.getAnnotation(Interceptor.class)){
                         clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.INTERCEPTOR_PRIORITY,entryClass));
+                    }else if(null != entryClass.getAnnotation(Service.class)){
+                        ServiceInject.injectService((Class<? extends LocalRouterService>) entryClass);
+                    }else if(null != entryClass.getAnnotation(Application.class)){
+                        ApplicationInject.injectApplicaiton((Class<? extends AnologyApplication>) entryClass);
                     }
                 }
             }
