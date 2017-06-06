@@ -4,6 +4,27 @@ import org.aspectj.bridge.MessageHandler
 import org.aspectj.tools.ajc.Main
 
 apply plugin: 'com.android.library'
+ext {
+    bintrayRepo = 'Maven'//bintray的库名称
+    bintrayName = 'LRouter-Api'//bintray中填写的名字
+    publishedGroupId = 'com.lenovohit.lrouter_api'//一般为包名
+    libraryName = 'lrouter-api'//本地库名称
+    artifact = "lrouter-api"//同上
+
+    libraryDescription = 'An Android Multi-process Framework for developing'
+    siteUrl = 'https://github.com/yuzhijun/LRouter'
+    gitUrl = 'https://github.com/yuzhijun/LRouter.git'
+    libraryVersion = '0.1.0'
+
+    developerId = 'yuzhijun'
+    developerName = 'yuzhijun'
+    developerEmail = '664281688@qq.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 buildscript {
     repositories {
         mavenCentral()
@@ -84,3 +105,5 @@ android.libraryVariants.all { variant ->
         }
     }
 }
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
