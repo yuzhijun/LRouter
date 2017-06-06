@@ -11,7 +11,7 @@ public class BusinessModuleBAnologyApplication extends AnologyApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        new BussinessModuleBProvider();
-        new BussinessModuleBAction();
+//        new BussinessModuleBProvider();
+//        new BussinessModuleBAction();
     }
 }

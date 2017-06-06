@@ -12,8 +12,5 @@ public class MainAnologyApplication extends AnologyApplication {
     public void onCreate() {//在类application类里面将provider注册进本地路由内，每个模块有一个provider对应多个action
         super.onCreate();
 //        LocalRouter.getInstance(mApplication).registerProvider("main",new MainProvider());
-        new MainProvider();
-        new MainAction();
-        new AppInterceptor();
     }
 }

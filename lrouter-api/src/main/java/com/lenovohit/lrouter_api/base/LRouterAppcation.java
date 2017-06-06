@@ -8,6 +8,7 @@ import com.lenovohit.lrouter_api.core.RemoteRouter;
 import com.lenovohit.lrouter_api.function.LRouterAnologyApplication;
 import com.lenovohit.lrouter_api.utils.ILRLogger;
 import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
+import com.lenovohit.lrouter_api.utils.PackageScanner;
 import com.lenovohit.lrouter_api.utils.ProcessUtil;
 
 import java.util.ArrayList;
@@ -47,6 +48,8 @@ public abstract class LRouterAppcation extends Application{
                     setAnologyApplicaiton();
                     //调用各类application的生命周期onCreate
                     invokeOnCreate();
+                    //扫描所有类注入带注解的action,provider,interceptor类
+                     PackageScanner.scan(this);
 //                }
 //            }).start();
         }catch (Exception e){
