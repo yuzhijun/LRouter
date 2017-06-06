@@ -11,6 +11,8 @@ import com.lenovohit.lrouter_api.annotation.ioc.Provider;
 import com.lenovohit.lrouter_api.annotation.ioc.Service;
 import com.lenovohit.lrouter_api.base.AnologyApplication;
 import com.lenovohit.lrouter_api.core.InjectorPriorityWrapper;
+import com.lenovohit.lrouter_api.core.LRAction;
+import com.lenovohit.lrouter_api.core.LRProvider;
 import com.lenovohit.lrouter_api.core.LocalRouterService;
 
 import java.util.ArrayList;
@@ -42,15 +44,23 @@ public class PackageScanner {
                 if (entryName.contains("com.")){//过滤掉系统的类
                     Class<?> entryClass = Class.forName(entryName, false,classLoader);
                     if (null != entryClass.getAnnotation(Provider.class)){//如果有这些个注解则都返回
-                        clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.PROVIDER_PRIORITY,entryClass));
+                        if (LRProvider.class.isAssignableFrom(entryClass)){
+                            clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.PROVIDER_PRIORITY,entryClass));
+                        }
                     }else if ( null != entryClass.getAnnotation(Action.class)){
-                        clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.ACTION_PRIORITY,entryClass));
+                        if (LRAction.class.isAssignableFrom(entryClass)){
+                            clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.ACTION_PRIORITY,entryClass));
+                        }
                     }else if( null != entryClass.getAnnotation(Interceptor.class)){
                         clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.INTERCEPTOR_PRIORITY,entryClass));
                     }else if(null != entryClass.getAnnotation(Service.class)){
-                        ServiceInject.injectService((Class<? extends LocalRouterService>) entryClass);
+                        if (LocalRouterService.class.isAssignableFrom(entryClass)){//判断类型是否正确
+                            ServiceInject.injectService((Class<? extends LocalRouterService>) entryClass);
+                        }
                     }else if(null != entryClass.getAnnotation(Application.class)){
-                        ApplicationInject.injectApplicaiton((Class<? extends AnologyApplication>) entryClass);
+                        if (AnologyApplication.class.isAssignableFrom(entryClass)){
+                            ApplicationInject.injectApplicaiton((Class<? extends AnologyApplication>) entryClass);
+                        }
                     }
                 }
             }
