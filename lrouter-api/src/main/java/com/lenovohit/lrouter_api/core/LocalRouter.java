@@ -224,6 +224,17 @@ public class LocalRouter {
             }
         }
     }
+
+    /**
+     * 通过provider名字查找provider
+     * */
+    public LRProvider findProvider(String name){
+        LRProvider targetProvider = null;
+        if (null != mProviderHashmap){
+            targetProvider = mProviderHashmap.get(name);
+        }
+        return targetProvider;
+    }
     //-----------------------------------------------------------------------------------------------------------------------------
     //本地异步任务
     private class LocalTask implements Callable<String> {

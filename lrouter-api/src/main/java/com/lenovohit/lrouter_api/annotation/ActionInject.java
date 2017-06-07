@@ -1,8 +1,10 @@
 package com.lenovohit.lrouter_api.annotation;
 
 import com.lenovohit.lrouter_api.annotation.ioc.Action;
+import com.lenovohit.lrouter_api.base.LRouterAppcation;
 import com.lenovohit.lrouter_api.core.LRAction;
 import com.lenovohit.lrouter_api.core.LRProvider;
+import com.lenovohit.lrouter_api.core.LocalRouter;
 import com.lenovohit.lrouter_api.exception.LRException;
 import com.lenovohit.lrouter_api.utils.ILRLogger;
 import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
@@ -28,12 +30,15 @@ public class ActionInject {
             if (null != action){
                 String name = action.name();
                 String provider = action.provider();
-                //对provider进行实例化
-                Class<? extends LRProvider> providerClazz = (Class<? extends LRProvider>) Class.forName(provider);
-                //进行调用
-                Method method = providerClazz.getMethod(REGISTER_ACTION,String.class,LRAction.class);
-                method.setAccessible(true);
-                method.invoke(providerClazz.newInstance(),name,lrAction);
+                LRProvider lrProvider = LocalRouter.getInstance(LRouterAppcation.getInstance()).findProvider(provider);
+                if (null != lrProvider){
+                    //对provider进行实例化
+                    Class<? extends LRProvider> providerClazz = lrProvider.getClass();
+                    //进行调用
+                    Method method = providerClazz.getMethod(REGISTER_ACTION,String.class,LRAction.class);
+                    method.setAccessible(true);
+                    method.invoke(lrProvider,name,lrAction);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();

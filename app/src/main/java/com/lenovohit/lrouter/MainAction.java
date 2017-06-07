@@ -13,7 +13,7 @@ import java.util.HashMap;
 /**
  * Created by yuzhijun on 2017/6/1.
  */
-@Action(name = "main",provider = "com.lenovohit.lrouter.MainProvider")
+@Action(name = "main",provider = "main")
 public class MainAction extends LRAction {//动作的执行
     @Override
     public boolean needAsync(Context context, HashMap<String, String> requestData) {
