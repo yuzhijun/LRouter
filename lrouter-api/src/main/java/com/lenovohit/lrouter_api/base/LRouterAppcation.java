@@ -1,16 +1,20 @@
 package com.lenovohit.lrouter_api.base;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.res.Configuration;
 
 import com.lenovohit.lrouter_api.core.LocalRouter;
 import com.lenovohit.lrouter_api.core.RemoteRouter;
 import com.lenovohit.lrouter_api.function.LRouterAnologyApplication;
+import com.lenovohit.lrouter_api.hook.InstrumentationHook;
 import com.lenovohit.lrouter_api.utils.ILRLogger;
 import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
 import com.lenovohit.lrouter_api.utils.PackageScanner;
 import com.lenovohit.lrouter_api.utils.ProcessUtil;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,11 +53,34 @@ public abstract class LRouterAppcation extends Application{
                     //调用各类application的生命周期onCreate
                     invokeOnCreate();
                     //扫描所有类注入带注解的action,provider,interceptor等类
-                     PackageScanner.scan(this);
+                     PackageScanner.scan(mInstance);
 //                }
 //            }).start();
         }catch (Exception e){
             LRLoggerFactory.getLRLogger(TAG).log("LRouterApplicaion初始化失败", ILRLogger.LogLevel.ERROR);
+        }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        try {
+            Class<?> mMainThreadClass = Class.forName("android.app.ActivityThread");
+
+            // Get current main thread.
+            Method getMainThread = mMainThreadClass.getDeclaredMethod("currentActivityThread");
+            getMainThread.setAccessible(true);
+            Object currentActivityThread = getMainThread.invoke(null);
+
+            // The field contain instrumentation.
+            Field mInstrumentationField = mMainThreadClass.getDeclaredField("mInstrumentation");
+            mInstrumentationField.setAccessible(true);
+
+            // Hook current instrumentation
+            mInstrumentationField.set(currentActivityThread, new InstrumentationHook());
+            LRLoggerFactory.getLRLogger(TAG).log("LRouter hook Instrumentation成功", ILRLogger.LogLevel.INFO);
+        } catch (Exception ex) {
+            LRLoggerFactory.getLRLogger(TAG).log("LRouter hook Instrumentation失败", ILRLogger.LogLevel.ERROR);
         }
     }
 

@@ -32,4 +32,13 @@
         tools:layout_editor_absoluteY="28dp"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="模块内通讯拦截"
+        tools:layout_editor_absoluteY="28dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 </LinearLayout>

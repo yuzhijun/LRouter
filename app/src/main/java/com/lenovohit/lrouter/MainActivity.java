@@ -1,5 +1,6 @@
 package com.lenovohit.lrouter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private Button button1;
     private Button button2;
     private Button button3;
+    private Button button4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
         button3 = (Button) findViewById(R.id.button3);
+        button4 = (Button) findViewById(R.id.button4);
 
         initEvent();
     }
@@ -125,6 +128,14 @@ public class MainActivity extends AppCompatActivity {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+            }
+        });
+
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,SecondActivity.class);
+                startActivity(intent);
             }
         });
     }

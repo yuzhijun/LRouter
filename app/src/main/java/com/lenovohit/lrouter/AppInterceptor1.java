@@ -10,7 +10,7 @@ import com.lenovohit.lrouter_api.intercept.AopInterceptor;
 public class AppInterceptor1 extends AopInterceptor {
     @Override
     public void enterRequestIntercept(String methodName, String[] paramNames, Object[] paramValues) {
-        int i = 0;
+
     }
 
     @Override
