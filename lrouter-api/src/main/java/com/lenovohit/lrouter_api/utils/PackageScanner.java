@@ -3,6 +3,7 @@ package com.lenovohit.lrouter_api.utils;
 import android.content.Context;
 
 import com.lenovohit.lrouter_api.annotation.ApplicationInject;
+import com.lenovohit.lrouter_api.annotation.InterceptInject;
 import com.lenovohit.lrouter_api.annotation.ServiceInject;
 import com.lenovohit.lrouter_api.annotation.ioc.Action;
 import com.lenovohit.lrouter_api.annotation.ioc.Application;
@@ -14,6 +15,7 @@ import com.lenovohit.lrouter_api.core.InjectorPriorityWrapper;
 import com.lenovohit.lrouter_api.core.LRAction;
 import com.lenovohit.lrouter_api.core.LRProvider;
 import com.lenovohit.lrouter_api.core.LocalRouterService;
+import com.lenovohit.lrouter_api.intercept.AopInterceptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,7 +54,7 @@ public class PackageScanner {
                             clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.ACTION_PRIORITY,entryClass));
                         }
                     }else if( null != entryClass.getAnnotation(Interceptor.class)){
-                        clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.INTERCEPTOR_PRIORITY,entryClass));
+                        InterceptInject.interceptorInject((Class<? extends AopInterceptor>) entryClass);
                     }else if(null != entryClass.getAnnotation(Service.class)){
                         if (LocalRouterService.class.isAssignableFrom(entryClass)){//判断类型是否正确
                             ServiceInject.injectService((Class<? extends LocalRouterService>) entryClass);

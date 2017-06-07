@@ -14,15 +14,15 @@ import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
 public class InterceptInject {
     private static final String TAG = "InterceptInject";
 
-    public static void interceptorInject(AopInterceptor aopInterceptor){
+    public static void interceptorInject(Class<? extends AopInterceptor> clazz){
         try{
-            if (null == aopInterceptor){
+            if (null == clazz){
                 throw new LRException("注入的interceptor不能为空");
             }
 
-            Class<? extends AopInterceptor> clazz = aopInterceptor.getClass();
             Interceptor interceptor = clazz.getAnnotation(Interceptor.class);
             if (null != interceptor){
+                AopInterceptor aopInterceptor = clazz.newInstance();
                 RequstAspect.interceptorInject(aopInterceptor);
             }
         }catch (Exception e){

@@ -7,6 +7,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -15,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Aspect
 public class RequstAspect {
-    private static AopInterceptor mAopInterceptor;
+    private static List<AopInterceptor> mAopInterceptors = new ArrayList<>();
     //筛选出用Navigation注解的所有方法
     private static final String POINTCUT_METHOD = "execution(@com.lenovohit.lrouter_api.intercept.ioc.Navigation * *(..))";
     //筛选出所有用Navigation注解的所有构造函数
@@ -43,7 +45,7 @@ public class RequstAspect {
     }
 
     public static void interceptorInject(AopInterceptor interceptor){
-        mAopInterceptor = interceptor;
+        mAopInterceptors.add(interceptor);
     }
 
     /**
@@ -56,8 +58,10 @@ public class RequstAspect {
         String[] parameterNames = codeSignature.getParameterNames();
         Object[] parameterValues = joinPoint.getArgs();
 
-        if (null != mAopInterceptor) {
-            mAopInterceptor.enterRequestIntercept(methodName, parameterNames, parameterValues);
+        if (null != mAopInterceptors) {
+            for (AopInterceptor aopInterceptor : mAopInterceptors){
+                aopInterceptor.enterRequestIntercept(methodName, parameterNames, parameterValues);
+            }
         }
     }
 
@@ -71,8 +75,11 @@ public class RequstAspect {
         String[] parameterNames = codeSignature.getParameterNames();
         Object[] parameterValues = joinPoint.getArgs();
 
-        if (null != mAopInterceptor){
-            mAopInterceptor.exitRequestIntercept(methodName,parameterNames,parameterValues,lengthMillis);
+
+        if (null != mAopInterceptors) {
+            for (AopInterceptor aopInterceptor : mAopInterceptors){
+                aopInterceptor.exitRequestIntercept(methodName,parameterNames,parameterValues,lengthMillis);
+            }
         }
     }
 }

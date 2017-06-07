@@ -10,6 +10,7 @@ import com.lenovohit.lrouter_api.IRemoteRouterAIDL;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
 import com.lenovohit.lrouter_api.exception.LRException;
 import com.lenovohit.lrouter_api.intercept.ioc.Navigation;
+import com.lenovohit.lrouter_api.utils.DefaultPoolExecutor;
 import com.lenovohit.lrouter_api.utils.ILRLogger;
 import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
 import com.lenovohit.lrouter_api.utils.ProcessUtil;
@@ -18,7 +19,6 @@ import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
@@ -60,7 +60,7 @@ public class LocalRouter {
 
     private static synchronized ExecutorService getThreadPool() {
         if (null == threadPool) {
-            threadPool = Executors.newCachedThreadPool();
+            threadPool = DefaultPoolExecutor.getInstance();
         }
         return threadPool;
     }
