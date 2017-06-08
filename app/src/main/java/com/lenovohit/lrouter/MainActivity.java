@@ -11,8 +11,8 @@ import android.widget.Toast;
 import com.lenovohit.basemodel.User;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
 import com.lenovohit.lrouter_api.core.LRouterRequest;
-import com.lenovohit.lrouter_api.core.LRouterResponse;
 import com.lenovohit.lrouter_api.core.LocalRouter;
+import com.lenovohit.lrouter_api.core.callback.IRequestCallBack;
 
 public class MainActivity extends AppCompatActivity {
     private Handler handler = new Handler();
@@ -40,12 +40,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    LRouterResponse response =  LocalRouter.getInstance(LRouterAppcation.getInstance())
+                    LocalRouter.ListenerFutureTask response =  LocalRouter.getInstance(LRouterAppcation.getInstance())
                                     .navigation(MainActivity.this, LRouterRequest.getInstance(MainActivity.this).provider("main")
                                     .action("main")
                                     .param("1", "Hello")
                                     .param("2", "World"));
-                    Toast.makeText(MainActivity.this, response.get(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, response.getLRouterResponse().get(), Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -56,36 +56,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try{
-                    final long startTime = System.currentTimeMillis();
-                    final LRouterResponse response = LocalRouter.getInstance(LRouterAppcation.getInstance())
+                    LocalRouter.ListenerFutureTask response = LocalRouter.getInstance(LRouterAppcation.getInstance())
                             .navigation(MainActivity.this, LRouterRequest.getInstance(MainActivity.this)
                                     .processName("com.lenovohit.lrouter:moduleA")
                                     .provider("bussinessModuleA")
                                     .action("bussinessModuleA")
                                     .param("1", "Hello")
-                                    .param("2", "Thread"));
+                                    .param("2", "Thread"))
+                                    .setCallBack(new IRequestCallBack() {
+                                @Override
+                                public void onSuccess(final String result) {
+                                    Toast.makeText(MainActivity.this,result,Toast.LENGTH_SHORT).show();
+                                }
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try{
-                                final String temp = response.getData();
-                                final long time = System.currentTimeMillis() - startTime;
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            Toast.makeText(MainActivity.this, "async:" + response.isAsync() + " cost:" + time + " response:" + response.get(), Toast.LENGTH_SHORT).show();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
+                                @Override
+                                public void onFailure(Exception e) {
+
+                                }
+                            });
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -96,37 +84,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try{
-                    final long startTime = System.currentTimeMillis();
-                    final LRouterResponse response = LocalRouter.getInstance(LRouterAppcation.getInstance())
+                    LocalRouter.ListenerFutureTask response = LocalRouter.getInstance(LRouterAppcation.getInstance())
                             .navigation(MainActivity.this, LRouterRequest.getInstance(MainActivity.this)
                                     .processName("com.lenovohit.lrouter:moduleB")
                                     .provider("ModuleBProvider")
                                     .action("ModuleBAction")
                                     .param("1", "Hello")
                                     .param("2", "Annotation")
-                                    .reqeustObject(new User("yuzhijun","123456")));
+                                    .reqeustObject(new User("yuzhijun","123456")))
+                            .setCallBack(new IRequestCallBack() {
+                                @Override
+                                public void onSuccess(final String result) {
+                                    Toast.makeText(MainActivity.this,result,Toast.LENGTH_SHORT).show();
+                                }
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try{
-                                final String temp = response.getData();
-                                final long time = System.currentTimeMillis() - startTime;
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            Toast.makeText(MainActivity.this, "async:" + response.isAsync() + " cost:" + time + " response:" + response.get(), Toast.LENGTH_SHORT).show();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
+                                @Override
+                                public void onFailure(Exception e) {
+
+                                }
+                            });
                 }catch (Exception e){
                     e.printStackTrace();
                 }

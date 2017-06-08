@@ -298,6 +298,4 @@ public class RemoteRouter {
         }
         return routerResponse;
     }
-
-
 }

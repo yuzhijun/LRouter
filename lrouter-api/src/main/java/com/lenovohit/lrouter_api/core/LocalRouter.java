@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 
@@ -17,6 +18,7 @@ import com.lenovohit.lrouter_api.utils.ILRLogger;
 import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
 import com.lenovohit.lrouter_api.utils.ProcessUtil;
 
+import java.lang.ref.SoftReference;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -31,6 +33,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
  */
 public class LocalRouter {
     private static final String TAG = "LocalRouter";
+    private Handler mHandler = new Handler();
     private LRouterAppcation mLRouterAppcation;
     private static LocalRouter sInstance = null;
     private String mProcessName = ProcessUtil.UNKNOWN_PROCESS_NAME;
@@ -39,6 +42,8 @@ public class LocalRouter {
     private ConcurrentHashMap<String,LRProvider> mProviderHashmap = null;
     //用于跨进程访问远程路由
     private IRemoteRouterAIDL mRemoteRouterAIDL;
+    //空的task
+    private EmptyTask emptyTask = new EmptyTask();
 
     private LocalRouter(LRouterAppcation context) {
         mLRouterAppcation = context;
@@ -122,8 +127,9 @@ public class LocalRouter {
      * 访问
      * */
     @Navigation
-    public LRouterResponse navigation(Context context, LRouterRequest request) throws Exception {
+    public ListenerFutureTask navigation(Context context, LRouterRequest request) throws Exception {
         LRouterResponse routerResponse = new LRouterResponse();
+        ListenerFutureTask futureTask = null;
         //如果当前进程等于请求的进程说明是在同个进程下则不需要跨进程访问
         if (mProcessName.equals(request.getProcessName())){
             //查找需要执行哪个action
@@ -131,19 +137,18 @@ public class LocalRouter {
             if (null == action){
                 throw new LRException(request.getAction()+"未找到,请检查是否有在"+request.getProvider()+"中注册");
             }
-
             //设置isIdle表示已经获取到此对象
             request.isIdle.set(true);
             //获取action是否需要非阻塞方式访问
             routerResponse.mAsync = action.needAsync(context,request);
             if (routerResponse.mAsync){//如果是异步则需要返回future对象即可
                 LocalTask task = new LocalTask(routerResponse, request, context, action);
-//                ListenerFutureTask futureTask = new ListenerFutureTask(task,requestCallBack);
-//                getThreadPool().submit(futureTask);
-                routerResponse.mAsyncResponse = getThreadPool().submit(task);
+                futureTask = new ListenerFutureTask(task,routerResponse);
+                getThreadPool().submit(futureTask);
             }else{//如果是同步,则立即返回返回值
                 LRActionResult result = action.invoke(context,request);
                 routerResponse.mActionResultStr = result.toString();
+                futureTask = new ListenerFutureTask(emptyTask,routerResponse);
             }
         }else if (!mLRouterAppcation.needMultipleProcess()){
             throw new LRException("工程未打开多进程开关,但是子module又配置了多进程,请确认");
@@ -157,18 +162,21 @@ public class LocalRouter {
             }else{//未连接上远程路由服务
                 routerResponse.mAsync = true;
                 ConnectRemoteTask task = new ConnectRemoteTask(routerResponse, processName, request);
-                routerResponse.mAsyncResponse = getThreadPool().submit(task);
-                return routerResponse;
+                futureTask = new ListenerFutureTask(task,routerResponse);
+                getThreadPool().submit(futureTask);
+                return futureTask;
             }
 
             if (!routerResponse.mAsync){//如果不是异步访问则直接调用
                 routerResponse.mActionResultStr = mRemoteRouterAIDL.navigation(processName,request);
+                futureTask = new ListenerFutureTask(emptyTask,routerResponse);
             }else{
                 RemoteTask task = new RemoteTask(processName, request);
-                routerResponse.mAsyncResponse = getThreadPool().submit(task);
+                futureTask = new ListenerFutureTask(task,routerResponse);
+                getThreadPool().submit(futureTask);
             }
         }
-        return routerResponse;
+        return futureTask;
     }
 
     //检查远程服务是否连接
@@ -316,22 +324,52 @@ public class LocalRouter {
         }
     }
 
+    /**
+     * 空的task
+     * */
+    private class EmptyTask implements Callable<String>{
+        @Override
+        public String call() throws Exception {
+            return null;
+        }
+    }
 
-    //用于监听请求结束
-    private class ListenerFutureTask extends FutureTask<String>{
+
+    /**
+     * 用于监听请求结束
+     * */
+    public class ListenerFutureTask extends FutureTask<String>{
         private IRequestCallBack mCallBack;
+        private LRouterResponse mLRouterResponse;
 
-        public ListenerFutureTask(@NonNull Callable<String> callable,IRequestCallBack callBack) {
+        public ListenerFutureTask(@NonNull Callable<String> callable,LRouterResponse lRouterResponse) {
             super(callable);
-            this.mCallBack = callBack;
+            this.mLRouterResponse = lRouterResponse;
+            //采用软引用避免无法释放
+            SoftReference<ListenerFutureTask> weakReference = new SoftReference<>(this);
+            this.mLRouterResponse.mAsyncResponse = weakReference;
         }
 
+        public LRouterResponse getLRouterResponse() {
+            return mLRouterResponse;
+        }
+        public ListenerFutureTask setCallBack(IRequestCallBack callBack) {
+            mCallBack = callBack;
+            return this;
+        }
         @Override
         protected void done() {
-            try{
-
-            }catch (Exception e){
-                e.printStackTrace();
+            if (null != mCallBack){
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            mCallBack.onSuccess(get());
+                        }catch (Exception e){
+                            mCallBack.onFailure(e);
+                        }
+                    }
+                });
             }
         }
     }

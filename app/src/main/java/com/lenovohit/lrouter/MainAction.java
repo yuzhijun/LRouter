@@ -15,7 +15,7 @@ import com.lenovohit.lrouter_api.core.LRouterRequest;
 public class MainAction extends LRAction {//动作的执行
     @Override
     public boolean needAsync(Context context, LRouterRequest requestData) {
-        return true;
+        return false;
     }
 
     @Override

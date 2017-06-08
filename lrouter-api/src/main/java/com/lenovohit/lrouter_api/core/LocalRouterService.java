@@ -41,9 +41,9 @@ public class LocalRouterService extends Service {
         @Override
         public String navigation(LRouterRequest routerRequest) throws RemoteException{
             try {
-                LocalRouter localRouter = LocalRouter.getInstance(LRouterAppcation.getInstance());
-                LRouterResponse routerResponse = localRouter.navigation(LocalRouterService.this,routerRequest);
-                return routerResponse.get();
+                LocalRouter.ListenerFutureTask routerResponse = LocalRouter.getInstance(LRouterAppcation.getInstance())
+                        .navigation(LocalRouterService.this,routerRequest);
+                return routerResponse.getLRouterResponse().get();
             } catch (Exception e) {
                 e.printStackTrace();
                 return new LRActionResult.Builder().msg(e.getMessage()).build().toString();

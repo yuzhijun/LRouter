@@ -15,7 +15,7 @@ public class BussinessModuleAction extends LRAction {
 
     @Override
     public boolean needAsync(Context context, LRouterRequest requestData) {
-        return false;
+        return true;
     }
 
     @Override

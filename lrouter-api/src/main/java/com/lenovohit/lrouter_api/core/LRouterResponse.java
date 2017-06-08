@@ -1,9 +1,10 @@
 package com.lenovohit.lrouter_api.core;
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.concurrent.Future;
+import java.lang.ref.SoftReference;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,7 +19,8 @@ public class LRouterResponse {
     String mData;
 
     String mActionResultStr;
-    Future<String> mAsyncResponse;
+    //采用软引用避免无法释放
+    public SoftReference<LocalRouter.ListenerFutureTask> mAsyncResponse;
 
     //是否是非阻塞访问
     boolean mAsync = true;
@@ -57,7 +59,7 @@ public class LRouterResponse {
 
     public String get() throws Exception {
         if (mAsync) {
-            mActionResultStr = mAsyncResponse.get(mTimeOut, TimeUnit.MILLISECONDS);
+            mActionResultStr = mAsyncResponse.get().get(mTimeOut, TimeUnit.MILLISECONDS);
             parseResult();
         }else{
             parseResult();
