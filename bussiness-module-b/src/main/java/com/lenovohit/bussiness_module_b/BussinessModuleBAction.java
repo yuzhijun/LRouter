@@ -3,6 +3,7 @@ package com.lenovohit.bussiness_module_b;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.lenovohit.basemodel.User;
 import com.lenovohit.lrouter_api.annotation.ioc.Action;
 import com.lenovohit.lrouter_api.core.LRAction;
 import com.lenovohit.lrouter_api.core.LRActionResult;
@@ -27,6 +28,10 @@ public class BussinessModuleBAction extends LRAction {
         }
         if(!TextUtils.isEmpty((CharSequence) requestData.getParams().get("2"))){
             temp+=requestData.getParams().get("2");
+        }
+        User user = (User) requestData.getRequestObject();
+        if (!TextUtils.isEmpty(user.getUserName()+user.getPassWord())){
+            temp+=user.getUserName()+"-"+user.getPassWord();
         }
         LRActionResult result = new LRActionResult.Builder()
                 .code(LRActionResult.RESULT_SUCESS)

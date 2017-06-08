@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.lenovohit.basemodel.User;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
 import com.lenovohit.lrouter_api.core.LRouterRequest;
 import com.lenovohit.lrouter_api.core.LRouterResponse;
@@ -102,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
                                     .provider("ModuleBProvider")
                                     .action("ModuleBAction")
                                     .param("1", "Hello")
-                                    .param("2", "Annotation"));
+                                    .param("2", "Annotation")
+                                    .reqeustObject(new User("yuzhijun","123456")));
 
                     new Thread(new Runnable() {
                         @Override
