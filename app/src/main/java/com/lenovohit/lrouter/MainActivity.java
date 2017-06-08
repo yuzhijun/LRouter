@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    LRouterResponse  response =  LocalRouter.getInstance(LRouterAppcation.getInstance())
+                    LRouterResponse response =  LocalRouter.getInstance(LRouterAppcation.getInstance())
                                     .navigation(MainActivity.this, LRouterRequest.getInstance(MainActivity.this).provider("main")
                                     .action("main")
                                     .param("1", "Hello")

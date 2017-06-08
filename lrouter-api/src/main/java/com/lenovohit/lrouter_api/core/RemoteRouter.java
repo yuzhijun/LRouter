@@ -202,7 +202,7 @@ public class RemoteRouter {
     /**
      * 判断本地路由访问的action是否是异步的
      * */
-    public boolean checkIfLocalRouterAsync(String processName,String requestData){
+    public boolean checkIfLocalRouterAsync(String processName,LRouterRequest requestData){
         ILocalRouterAIDL target = mILocalRouterAIDLHashMap.get(processName);
         if (null == target){
             LocalRouterServiceWrapper localRouterServiceWrapper = sLocalRouterClassesHashMap.get(processName);
@@ -224,7 +224,7 @@ public class RemoteRouter {
     /**
      * 通过进程名查找访问那个本地路由服务,查找到则调用，完成跨进程通讯
      * */
-    public LRouterResponse navigation(String processName,String requestStr) {
+    public LRouterResponse navigation(String processName,LRouterRequest requestStr) {
         LRouterResponse routerResponse = new LRouterResponse();
 
         if (mStopping) {//如果远程服务已经停止

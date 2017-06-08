@@ -1,6 +1,8 @@
 package com.lenovohit.lrouter_api.core;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.lenovohit.lrouter_api.utils.ProcessUtil;
@@ -18,12 +20,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 请求体
  * Created by yuzhijun on 2017/5/31.
  */
-public class LRouterRequest {
+public class LRouterRequest<T> implements Parcelable {
     private static volatile String DEFAULT_PROCESS = "";
     private String processName;
     private String provider;
     private String action;
     private HashMap<String,String> params;
+    T requestObject;
 
     //利用CAS算法实现非阻塞并发获取对象
     private static final int length = 64;
@@ -140,6 +143,10 @@ public class LRouterRequest {
         return params;
     }
 
+    public T getRequestObject(){
+        return requestObject;
+    }
+
     public LRouterRequest processName(String processName){
         this.processName = processName;
         return this;
@@ -159,6 +166,11 @@ public class LRouterRequest {
 
     public LRouterRequest param(String key, String data) {
         this.params.put(key, data);
+        return this;
+    }
+
+    public LRouterRequest reqeustObject(T t) {
+        this.requestObject = t;
         return this;
     }
 
@@ -227,4 +239,55 @@ public class LRouterRequest {
             return new LRouterRequest(this);
         }
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.processName);
+        dest.writeString(this.provider);
+        dest.writeString(this.action);
+        if(this.params !=null){
+            dest.writeInt(this.params.size());
+            for (Map.Entry<String, String> entry : this.params.entrySet()) {
+                dest.writeString(entry.getKey());
+                dest.writeString(entry.getValue());
+            }
+        }else{
+            dest.writeInt(0);
+        }
+        dest.writeParcelable((Parcelable) this.requestObject, flags);
+    }
+
+    protected LRouterRequest(Parcel in) {
+        this.processName = in.readString();
+        this.provider = in.readString();
+        this.action = in.readString();
+        int mapSize = in.readInt();
+        if (mapSize > 0) {
+            this.params = new HashMap<>();
+        }
+        for (int i = 0; i < mapSize; i++) {
+            String key = in.readString();
+            String value = in.readString();
+            this.params.put(key, value);
+        }
+        this.requestObject = (T) in.readParcelable(this.getClass().getClassLoader());
+    }
+
+    public static final Creator<LRouterRequest> CREATOR = new Creator<LRouterRequest>() {
+        @Override
+        public LRouterRequest createFromParcel(Parcel source) {
+            return new LRouterRequest(source);
+        }
+
+        @Override
+        public LRouterRequest[] newArray(int size) {
+            return new LRouterRequest[size];
+        }
+    };
 }

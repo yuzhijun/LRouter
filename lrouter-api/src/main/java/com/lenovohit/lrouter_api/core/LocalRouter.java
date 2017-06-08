@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 
 import com.lenovohit.lrouter_api.IRemoteRouterAIDL;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
+import com.lenovohit.lrouter_api.core.callback.IRequestCallBack;
 import com.lenovohit.lrouter_api.exception.LRException;
 import com.lenovohit.lrouter_api.intercept.ioc.Navigation;
 import com.lenovohit.lrouter_api.utils.DefaultPoolExecutor;
@@ -15,10 +17,10 @@ import com.lenovohit.lrouter_api.utils.ILRLogger;
 import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
 import com.lenovohit.lrouter_api.utils.ProcessUtil;
 
-import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.FutureTask;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
@@ -124,9 +126,6 @@ public class LocalRouter {
         LRouterResponse routerResponse = new LRouterResponse();
         //如果当前进程等于请求的进程说明是在同个进程下则不需要跨进程访问
         if (mProcessName.equals(request.getProcessName())){
-            //将传输的参数放进params中
-            HashMap<String, String> params = new HashMap<>();
-            params.putAll(request.getParams());
             //查找需要执行哪个action
             LRAction action = searchNavAction(request);
             if (null == action){
@@ -136,12 +135,14 @@ public class LocalRouter {
             //设置isIdle表示已经获取到此对象
             request.isIdle.set(true);
             //获取action是否需要非阻塞方式访问
-            routerResponse.mAsync = action.needAsync(context,params);
+            routerResponse.mAsync = action.needAsync(context,request);
             if (routerResponse.mAsync){//如果是异步则需要返回future对象即可
-                LocalTask task = new LocalTask(routerResponse, params, context, action);
+                LocalTask task = new LocalTask(routerResponse, request, context, action);
+//                ListenerFutureTask futureTask = new ListenerFutureTask(task,requestCallBack);
+//                getThreadPool().submit(futureTask);
                 routerResponse.mAsyncResponse = getThreadPool().submit(task);
             }else{//如果是同步,则立即返回返回值
-                LRActionResult result = action.invoke(context,params);
+                LRActionResult result = action.invoke(context,request);
                 routerResponse.mActionResultStr = result.toString();
             }
         }else if (!mLRouterAppcation.needMultipleProcess()){
@@ -149,22 +150,21 @@ public class LocalRouter {
         }else{
             //如果是跨进程访问的话则将要发送的数据变成json再进行传输,否则跨进程需要对象实现Parcelable
             String processName = request.getProcessName();
-            String aidlTransportStr = request.toString();
             request.isIdle.set(true);
             //检查远程路由的服务是否连接上
             if (checkRemoteRouterConnect()){
-                routerResponse.mAsync = mRemoteRouterAIDL.checkIfLocalRouterAsync(processName,aidlTransportStr);
+                routerResponse.mAsync = mRemoteRouterAIDL.checkIfLocalRouterAsync(processName,request);
             }else{//未连接上远程路由服务
                 routerResponse.mAsync = true;
-                ConnectRemoteTask task = new ConnectRemoteTask(routerResponse, processName, aidlTransportStr);
+                ConnectRemoteTask task = new ConnectRemoteTask(routerResponse, processName, request);
                 routerResponse.mAsyncResponse = getThreadPool().submit(task);
                 return routerResponse;
             }
 
             if (!routerResponse.mAsync){//如果不是异步访问则直接调用
-                routerResponse.mActionResultStr = mRemoteRouterAIDL.navigation(processName,aidlTransportStr);
+                routerResponse.mActionResultStr = mRemoteRouterAIDL.navigation(processName,request);
             }else{
-                RemoteTask task = new RemoteTask(processName, aidlTransportStr);
+                RemoteTask task = new RemoteTask(processName, request);
                 routerResponse.mAsyncResponse = getThreadPool().submit(task);
             }
         }
@@ -201,7 +201,7 @@ public class LocalRouter {
      * */
     public boolean checkIfLocalRouterAsync(LRouterRequest request){
         if (mProcessName.equals(request.getProcessName()) && checkRemoteRouterConnect()) {
-            return findRequestAction(request).needAsync(mLRouterAppcation, request.getParams());
+            return findRequestAction(request).needAsync(mLRouterAppcation, request);
         } else {
             return true;
         }
@@ -240,11 +240,12 @@ public class LocalRouter {
     private class LocalTask implements Callable<String> {
 
         private LRouterResponse mResponse;
-        private HashMap<String, String> mRequestData;
+        private LRouterRequest mRequestData;
         private Context mContext;
         private LRAction mAction;
-        private Object mObject;
-        public LocalTask(LRouterResponse routerResponse, HashMap<String, String> requestData, Context context, LRAction maAction) {
+
+
+        public LocalTask(LRouterResponse routerResponse, LRouterRequest requestData, Context context, LRAction maAction) {
             this.mContext = context;
             this.mResponse = routerResponse;
             this.mRequestData = requestData;
@@ -261,15 +262,15 @@ public class LocalRouter {
     //远程异步服务
     private class RemoteTask implements Callable<String>{
         private String processName;
-        private String requestStr;
-        public RemoteTask(String processName,String requestStr){
+        private LRouterRequest request;
+        public RemoteTask(String processName,LRouterRequest request){
             this.processName = processName;
-            this.requestStr = requestStr;
+            this.request = request;
         }
 
         @Override
         public String call() throws Exception {
-            String result = mRemoteRouterAIDL.navigation(processName, requestStr);
+            String result = mRemoteRouterAIDL.navigation(processName, request);
             return result;
         }
     }
@@ -277,13 +278,13 @@ public class LocalRouter {
     //异步启动远程路由服务并访问
     private class ConnectRemoteTask implements Callable<String> {
         private String processName;
-        private String requestStr;
+        private LRouterRequest request;
         private LRouterResponse response;
 
-        public ConnectRemoteTask(LRouterResponse response,String processName,String requestStr){
+        public ConnectRemoteTask(LRouterResponse response,String processName,LRouterRequest request){
             this.processName = processName;
             this.response = response;
-            this.requestStr = requestStr;
+            this.request = request;
         }
 
         @Override
@@ -305,14 +306,33 @@ public class LocalRouter {
                 }
                 if (time >= 600) {//如果超时则视为错误
                     ErrorAction defaultNotFoundAction = new ErrorAction(true, LRActionResult.RESULT_CANNOT_BIND_REMOTE, "绑定远程服务超时");
-                    LRActionResult result = defaultNotFoundAction.invoke(mLRouterAppcation, new HashMap<String, String>());
+                    LRActionResult result = defaultNotFoundAction.invoke(mLRouterAppcation, request);
                     response.mActionResultStr = result.toString();
                     return result.toString();
                 }
             }
-            String result = mRemoteRouterAIDL.navigation(processName, requestStr);
+            String result = mRemoteRouterAIDL.navigation(processName, request);
             return result;
         }
     }
 
+
+    //用于监听请求结束
+    private class ListenerFutureTask extends FutureTask<String>{
+        private IRequestCallBack mCallBack;
+
+        public ListenerFutureTask(@NonNull Callable<String> callable,IRequestCallBack callBack) {
+            super(callable);
+            this.mCallBack = callBack;
+        }
+
+        @Override
+        protected void done() {
+            try{
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
 }

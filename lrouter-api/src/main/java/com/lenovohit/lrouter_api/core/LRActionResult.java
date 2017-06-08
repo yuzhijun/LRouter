@@ -7,7 +7,7 @@ import org.json.JSONObject;
  *  action返回结果
  * Created by yuzhijun on 2017/5/31.
  */
-public class LRActionResult {
+public class LRActionResult{
     public static final int RESULT_ERROR = 0x0000;//错误码
     public static final int RESULT_SUCESS = 0x0001;//成功码
     public static final int ACTION_NOT_FOUND = 0x0002;//action未找到
@@ -53,7 +53,7 @@ public class LRActionResult {
         return jsonObject.toString();
     }
 
-    public static class Builder {
+    public static class Builder{
         private int mCode;
         private String mMsg;
         private String mData;

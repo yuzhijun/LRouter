@@ -1,9 +1,10 @@
 // ILocalRouterAIDL.aidl
 package com.lenovohit.lrouter_api;
+import com.lenovohit.lrouter_api.core.LRouterRequest;
 
 interface ILocalRouterAIDL {
-    boolean checkIfLocalRouterAsync(String routerRequset);
     void connectRemoteRouter(String processName);
-    String navigation(String routerRequest);
-     boolean stopRemoteRouter();
+    boolean stopRemoteRouter();
+    boolean checkIfLocalRouterAsync(in LRouterRequest routerRequset);
+    String navigation(in LRouterRequest routerRequest);
 }

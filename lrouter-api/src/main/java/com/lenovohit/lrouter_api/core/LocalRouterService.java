@@ -28,11 +28,9 @@ public class LocalRouterService extends Service {
 
     ILocalRouterAIDL.Stub mStub = new ILocalRouterAIDL.Stub() {
         @Override
-        public boolean checkIfLocalRouterAsync(String routerRequset) throws RemoteException {
+        public boolean checkIfLocalRouterAsync(LRouterRequest routerRequset) throws RemoteException {
             return LocalRouter.getInstance(LRouterAppcation.getInstance()).
-                    checkIfLocalRouterAsync(new LRouterRequest.Builder(getApplicationContext()).
-                    json(routerRequset).
-                    build());
+                    checkIfLocalRouterAsync(routerRequset);
         }
 
         @Override
@@ -41,14 +39,10 @@ public class LocalRouterService extends Service {
         }
 
         @Override
-        public String navigation(String routerRequest) throws RemoteException{
+        public String navigation(LRouterRequest routerRequest) throws RemoteException{
             try {
                 LocalRouter localRouter = LocalRouter.getInstance(LRouterAppcation.getInstance());
-                LRouterRequest lRouterRequest = new LRouterRequest
-                        .Builder(getApplicationContext())
-                        .json(routerRequest)
-                        .build();
-                LRouterResponse routerResponse = localRouter.navigation(LocalRouterService.this,lRouterRequest);
+                LRouterResponse routerResponse = localRouter.navigation(LocalRouterService.this,routerRequest);
                 return routerResponse.get();
             } catch (Exception e) {
                 e.printStackTrace();

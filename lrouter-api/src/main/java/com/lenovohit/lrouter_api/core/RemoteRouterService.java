@@ -65,12 +65,12 @@ public final class RemoteRouterService extends Service {
 
     IRemoteRouterAIDL.Stub mStub = new IRemoteRouterAIDL.Stub() {
         @Override
-        public boolean checkIfLocalRouterAsync(String processName, String routerRequset) throws RemoteException {
+        public boolean checkIfLocalRouterAsync(String processName, LRouterRequest routerRequset) throws RemoteException {
             return RemoteRouter.getInstance(LRouterAppcation.getInstance()).checkIfLocalRouterAsync(processName,routerRequset);
         }
 
         @Override
-        public String navigation(String processName,String routerRequest) throws RemoteException{
+        public String navigation(String processName,LRouterRequest routerRequest) throws RemoteException{
            try{
                 return RemoteRouter.getInstance(LRouterAppcation.getInstance())
                         .navigation(processName,routerRequest)
