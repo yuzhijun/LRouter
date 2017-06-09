@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                                     .action("bussinessModuleA")
                                     .param("1", "Hello")
                                     .param("2", "Thread"))
-                                    .setCallBack(new IRequestCallBack() {
+                            .setCallBack(new IRequestCallBack() {
                                 @Override
                                 public void onSuccess(final String result) {
                                     Toast.makeText(MainActivity.this,result,Toast.LENGTH_SHORT).show();
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 try{
                     RxLocalLRouter.getInstance(LRouterAppcation.getInstance())
-                            .rxNavigation(MainActivity.this,LRouterRequest.getInstance(MainActivity.this)
+                            .rxProxyNavigation(MainActivity.this,LRouterRequest.getInstance(MainActivity.this)
                                     .processName("com.lenovohit.lrouter:moduleA")
                                     .provider("bussinessModuleA")
                                     .action("bussinessModuleA")

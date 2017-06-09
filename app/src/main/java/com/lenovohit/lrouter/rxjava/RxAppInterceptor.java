@@ -1,15 +1,11 @@
-package com.lenovohit.lrouter;
+package com.lenovohit.lrouter.rxjava;
 
-import com.lenovohit.lrouter_api.annotation.ioc.Interceptor;
-import com.lenovohit.lrouter_api.intercept.AopInterceptor;
+import com.lenovohit.rxlrouter_api.intercept.RxAopInterceptor;
 
 /**
- * 请求拦截器
- * Created by yuzhijun on 2017/6/5.
+ * Created by yuzhijun on 2017/6/9.
  */
-@Interceptor
-public class AppInterceptor extends AopInterceptor {
-
+public class RxAppInterceptor extends RxAopInterceptor {
     @Override
     public void enterRequestIntercept(String methodName, String[] paramNames, Object[] paramValues) {
         int i = 0;

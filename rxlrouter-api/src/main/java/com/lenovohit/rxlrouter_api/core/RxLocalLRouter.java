@@ -9,7 +9,10 @@ import com.lenovohit.lrouter_api.core.LRouterRequest;
 import com.lenovohit.lrouter_api.core.LRouterResponse;
 import com.lenovohit.lrouter_api.core.LocalRouter;
 import com.lenovohit.lrouter_api.exception.LRException;
-import com.lenovohit.lrouter_api.intercept.ioc.Navigation;
+import com.lenovohit.rxlrouter_api.intercept.IRxNavigation;
+import com.lenovohit.rxlrouter_api.intercept.RxNavigationInvocationHandler;
+
+import java.lang.reflect.Proxy;
 
 import io.reactivex.Observable;
 
@@ -17,7 +20,7 @@ import io.reactivex.Observable;
  * 为了兼容Rxjava而引入
  * Created by yuzhijun on 2017/6/9.
  */
-public class RxLocalLRouter extends LocalRouter {
+public class RxLocalLRouter extends LocalRouter implements IRxNavigation{
     private static RxLocalLRouter sInstance = null;
 
     private RxLocalLRouter(LRouterAppcation context) {
@@ -38,7 +41,7 @@ public class RxLocalLRouter extends LocalRouter {
     /**
      * 返回一个Observable对象用于rxjava实现
      * */
-    @Navigation
+    @Override
     public Observable<String> rxNavigation(Context context, LRouterRequest request) throws Exception{
         LRouterResponse routerResponse = new LRouterResponse();
         if (mProcessName.equals(request.getProcessName())){
@@ -82,5 +85,11 @@ public class RxLocalLRouter extends LocalRouter {
                 return Observable.fromFuture(getThreadPool().submit(task));
             }
         }
+    }
+
+    public Observable<String> rxProxyNavigation(Context context, LRouterRequest request) throws Exception{
+        IRxNavigation localLRouterProxy = (IRxNavigation) Proxy.newProxyInstance(IRxNavigation.class.getClassLoader(),
+                new Class[]{IRxNavigation.class},new RxNavigationInvocationHandler(sInstance));
+        return localLRouterProxy.rxNavigation(context,request);
     }
 }
