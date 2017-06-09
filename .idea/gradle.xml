@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/bussiness-module-a" />
             <option value="$PROJECT_DIR$/bussiness-module-b" />
             <option value="$PROJECT_DIR$/lrouter-api" />
+            <option value="$PROJECT_DIR$/rxlrouter-api" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

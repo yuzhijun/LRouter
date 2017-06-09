@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/bussiness-module-a/bussiness-module-a.iml" filepath="$PROJECT_DIR$/bussiness-module-a/bussiness-module-a.iml" />
       <module fileurl="file://$PROJECT_DIR$/bussiness-module-b/bussiness-module-b.iml" filepath="$PROJECT_DIR$/bussiness-module-b/bussiness-module-b.iml" />
       <module fileurl="file://$PROJECT_DIR$/lrouter-api/lrouter-api.iml" filepath="$PROJECT_DIR$/lrouter-api/lrouter-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rxlrouter-api/rxlrouter-api.iml" filepath="$PROJECT_DIR$/rxlrouter-api/rxlrouter-api.iml" />
     </modules>
   </component>
 </project>

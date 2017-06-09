@@ -18,18 +18,22 @@ public class LRouterResponse {
     String mMessage = "";
     String mData;
 
-    String mActionResultStr;
+    public String mActionResultStr;
     //采用软引用避免无法释放
     public SoftReference<LocalRouter.ListenerFutureTask> mAsyncResponse;
 
     //是否是非阻塞访问
-    boolean mAsync = true;
+    protected boolean mAsync = true;
     //异步获取数据是否有得到数据
     private boolean mHasGet = false;
     private long mTimeOut = 0;
 
     public boolean isAsync() {
         return mAsync;
+    }
+
+    public void setAsync(boolean async) {
+        mAsync = async;
     }
 
     public LRouterResponse() {

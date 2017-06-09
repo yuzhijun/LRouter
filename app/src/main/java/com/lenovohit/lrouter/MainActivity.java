@@ -1,6 +1,5 @@
 package com.lenovohit.lrouter;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +12,11 @@ import com.lenovohit.lrouter_api.base.LRouterAppcation;
 import com.lenovohit.lrouter_api.core.LRouterRequest;
 import com.lenovohit.lrouter_api.core.LocalRouter;
 import com.lenovohit.lrouter_api.core.callback.IRequestCallBack;
+import com.lenovohit.rxlrouter_api.core.RxLocalLRouter;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private Handler handler = new Handler();
@@ -21,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private Button button2;
     private Button button3;
     private Button button4;
+    private Button button5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         button2 = (Button) findViewById(R.id.button2);
         button3 = (Button) findViewById(R.id.button3);
         button4 = (Button) findViewById(R.id.button4);
+        button5 = (Button) findViewById(R.id.button5);
 
         initEvent();
     }
@@ -112,8 +118,37 @@ public class MainActivity extends AppCompatActivity {
         button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,SecondActivity.class);
-                startActivity(intent);
+               SecondActivity.startSecondActivity(MainActivity.this,"第二个页面");
+            }
+        });
+
+        button5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try{
+                    RxLocalLRouter.getInstance(LRouterAppcation.getInstance())
+                            .rxNavigation(MainActivity.this,LRouterRequest.getInstance(MainActivity.this)
+                                    .processName("com.lenovohit.lrouter:moduleA")
+                                    .provider("bussinessModuleA")
+                                    .action("bussinessModuleA")
+                                    .param("1", "Hello")
+                                    .param("2", "Thread"))
+                            .subscribeOn(Schedulers.from(LocalRouter.getThreadPool()))
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Consumer<String>() {
+                                @Override
+                                public void accept(String s) throws Exception {
+                                    Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT).show();
+                                }
+                            }, new Consumer<Throwable>() {
+                                @Override
+                                public void accept(Throwable throwable) throws Exception {
+
+                                }
+                            });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         });
     }

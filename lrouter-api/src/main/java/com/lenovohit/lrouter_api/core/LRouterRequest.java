@@ -30,7 +30,7 @@ public class LRouterRequest<T> implements Parcelable {
 
     //利用CAS算法实现非阻塞并发获取对象
     private static final int length = 64;
-    AtomicBoolean isIdle = new AtomicBoolean(true);
+    public AtomicBoolean isIdle = new AtomicBoolean(true);
     private static AtomicInteger sIndex = new AtomicInteger(0);
     private static final int RESET_NUM = 1000;
     private static volatile LRouterRequest[] table = new LRouterRequest[length];

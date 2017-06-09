@@ -36,16 +36,16 @@ public class LocalRouter {
     private Handler mHandler = new Handler();
     private LRouterAppcation mLRouterAppcation;
     private static LocalRouter sInstance = null;
-    private String mProcessName = ProcessUtil.UNKNOWN_PROCESS_NAME;
+    public String mProcessName = ProcessUtil.UNKNOWN_PROCESS_NAME;
     private static ExecutorService threadPool = null;
     //本地路由持有各个模块所有的provider,可能有多个进程localRouter访问所以用ConcurrentHashMap
     private ConcurrentHashMap<String,LRProvider> mProviderHashmap = null;
     //用于跨进程访问远程路由
-    private IRemoteRouterAIDL mRemoteRouterAIDL;
+    public IRemoteRouterAIDL mRemoteRouterAIDL;
     //空的task
     private EmptyTask emptyTask = new EmptyTask();
 
-    private LocalRouter(LRouterAppcation context) {
+    protected LocalRouter(LRouterAppcation context) {
         mLRouterAppcation = context;
         mProviderHashmap = new ConcurrentHashMap<>();
         mProcessName = ProcessUtil.getProcessName(context, ProcessUtil.getMyProcessId());
@@ -65,7 +65,7 @@ public class LocalRouter {
         return sInstance;
     }
 
-    private static synchronized ExecutorService getThreadPool() {
+    public static synchronized ExecutorService getThreadPool() {
         if (null == threadPool) {
             threadPool = DefaultPoolExecutor.getInstance();
         }
@@ -180,7 +180,7 @@ public class LocalRouter {
     }
 
     //检查远程服务是否连接
-    private boolean checkRemoteRouterConnect(){
+    public boolean checkRemoteRouterConnect(){
         boolean result = false;
         if (null != mRemoteRouterAIDL) {
             result = true;
@@ -191,7 +191,7 @@ public class LocalRouter {
     /**
      * 寻找action如果未找到则返回null
      * */
-    private LRAction searchNavAction(LRouterRequest request){
+    protected LRAction searchNavAction(LRouterRequest request){
         if (null != mProviderHashmap){
             LRProvider provider = mProviderHashmap.get(request.getProvider());
             if (null == provider){
@@ -245,7 +245,7 @@ public class LocalRouter {
     }
     //-----------------------------------------------------------------------------------------------------------------------------
     //本地异步任务
-    private class LocalTask implements Callable<String> {
+    public class LocalTask implements Callable<String> {
 
         private LRouterResponse mResponse;
         private LRouterRequest mRequestData;
@@ -268,7 +268,7 @@ public class LocalRouter {
     }
 
     //远程异步服务
-    private class RemoteTask implements Callable<String>{
+    public class RemoteTask implements Callable<String>{
         private String processName;
         private LRouterRequest request;
         public RemoteTask(String processName,LRouterRequest request){
@@ -284,7 +284,7 @@ public class LocalRouter {
     }
 
     //异步启动远程路由服务并访问
-    private class ConnectRemoteTask implements Callable<String> {
+    public class ConnectRemoteTask implements Callable<String> {
         private String processName;
         private LRouterRequest request;
         private LRouterResponse response;

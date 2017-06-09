@@ -14,7 +14,7 @@ ext {
     libraryDescription = 'An Android Multi-process Framework for developing'
     siteUrl = 'https://github.com/yuzhijun/LRouter'
     gitUrl = 'https://github.com/yuzhijun/LRouter.git'
-    libraryVersion = '0.1.0'
+    libraryVersion = '0.1.1'
 
     developerId = 'yuzhijun'
     developerName = 'yuzhijun'

@@ -82,4 +82,12 @@ public class RequstAspect {
             }
         }
     }
+
+    //----------------------------------------------------------------------------------------------------
+    //筛选出带reach注解的方法
+    private static final String POINTCUT_REACH_METHOD = "";
+    //筛选出带reach注解的构造方法
+    private static final String POINTCUT_REACH_CONSTRUCTOR = "";
+
+
 }
