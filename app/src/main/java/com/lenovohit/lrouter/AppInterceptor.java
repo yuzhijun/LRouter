@@ -12,7 +12,7 @@ public class AppInterceptor extends AopInterceptor {
 
     @Override
     public void enterRequestIntercept(String methodName, String[] paramNames, Object[] paramValues) {
-        int i = 0;
+
     }
 
     @Override
