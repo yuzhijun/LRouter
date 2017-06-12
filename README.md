@@ -92,7 +92,6 @@ public class MainAction extends LRAction {//动作的执行
 ```
 
 ### 1.7.创建本地跨进程通讯的service
-
 因为跨进程用AIDL通讯，所以每个工程在多进程情况下都需要创建这个service用于本地进程与远程进程的通讯
 ```
 @Service(name = "com.lenovohit.lrouter")
@@ -123,6 +122,7 @@ public class AppInterceptor extends AopInterceptor {
 
 ### 2.1.模块内无跨进程同步调用方法
 
+只需要指明provider和actin和要传的参数即可
 ```
 LocalRouter.ListenerFutureTask response =  LocalRouter.getInstance(LRouterAppcation.getInstance())
                                     .navigation(MainActivity.this, LRouterRequest.getInstance(MainActivity.this)
@@ -130,13 +130,13 @@ LocalRouter.ListenerFutureTask response =  LocalRouter.getInstance(LRouterAppcat
                                     .action("main")
                                     .param("1", "Hello")
                                     .param("2", "World"));                              
- ```    
+``` 
 response.get();直接获取请求结果
   
 ### 2.2.跨模块跨进程异步调用方法
 
 此处建议跨模块跨进程最好使用异步调用
-```     
+```
 LocalRouter.ListenerFutureTask response = LocalRouter.getInstance(LRouterAppcation.getInstance())
                             .navigation(MainActivity.this, LRouterRequest.getInstance(MainActivity.this)
                                     .processName("com.lenovohit.lrouter:moduleB")
@@ -156,12 +156,13 @@ LocalRouter.ListenerFutureTask response = LocalRouter.getInstance(LRouterAppcati
 
                                 }
                             });
-```     
+```
 processName表示要访问的进程名字，provider表示要访问的provider，action表示要执行的动作，param表示要传的参数，reqeustObject表示传的对象参数
   
 ### 2.3.使用rxjava方式访问
+
 如果引入了rxlrouter-api则可以使用rxjava的方式进行访问
-```  
+```
 RxLocalLRouter.getInstance(LRouterAppcation.getInstance())
                             .rxProxyNavigation(MainActivity.this,LRouterRequest.getInstance(MainActivity.this)
                                     .processName("com.lenovohit.lrouter:moduleA")
@@ -182,7 +183,7 @@ RxLocalLRouter.getInstance(LRouterAppcation.getInstance())
 
                                 }
                             });
-```  
+```
 ## 3.后续工作
   
   文档补充与功能实现均还在路上，期待进一步...
