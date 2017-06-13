@@ -9,10 +9,6 @@ import com.lenovohit.lrouter_api.core.LRProvider;
  */
 @Provider(name = "ModuleBProvider")
 public class BussinessModuleBProvider extends LRProvider {
-    @Override
-    protected void registerActions() {
-
-    }
 
     @Override
     public void registerAction(String actionName, LRAction action) {

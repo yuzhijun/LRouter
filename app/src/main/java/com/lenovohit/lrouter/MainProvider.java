@@ -9,10 +9,6 @@ import com.lenovohit.lrouter_api.core.LRProvider;
  */
 @Provider(name = "main")
 public class MainProvider extends LRProvider {
-    @Override
-    protected void registerActions() {//在provider里面注册进多个action,达到暴露action的效果
-//        registerAction("main",new MainAction());
-    }
 
     @Override
     public void registerAction(String actionName, LRAction action) {

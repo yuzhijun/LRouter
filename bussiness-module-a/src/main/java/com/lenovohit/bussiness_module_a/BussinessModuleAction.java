@@ -3,6 +3,7 @@ package com.lenovohit.bussiness_module_a;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.lenovohit.lrouter_api.annotation.ioc.Action;
 import com.lenovohit.lrouter_api.core.LRAction;
 import com.lenovohit.lrouter_api.core.LRActionResult;
 import com.lenovohit.lrouter_api.core.LRouterRequest;
@@ -10,7 +11,7 @@ import com.lenovohit.lrouter_api.core.LRouterRequest;
 /**
  * Created by yuzhijun on 2017/6/1.
  */
-
+@Action(name = "bussinessModuleA",provider = "bussinessModuleA")
 public class BussinessModuleAction extends LRAction {
 
     @Override

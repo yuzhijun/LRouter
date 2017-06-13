@@ -46,8 +46,6 @@ public abstract class LRouterAppcation extends Application{
                     initLocalRouter();
                     //注册所有的本地路由服务,主要是用于跨进程通讯
                     initLocalRouterService();
-                    //注册所有的module的类application
-                    regiterAnologyApplication();
                     //因为多进程的程序application会被执行多次,所以根据进程获取各类application并设置application实例
                     setAnologyApplicaiton();
                     //调用各类application的生命周期onCreate
@@ -163,15 +161,6 @@ public abstract class LRouterAppcation extends Application{
             }
         }
     }
-
-    /**
-     * 注册所有的LocalRouterService
-     * */
-    public abstract void regiterLocalRouterService();
-    /**
-     * 注册所有的类application
-     * */
-    protected abstract void regiterAnologyApplication();
 
     /**
      * 是否需要开启多进程

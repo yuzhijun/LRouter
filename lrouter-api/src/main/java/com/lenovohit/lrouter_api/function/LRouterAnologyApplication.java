@@ -17,7 +17,5 @@ public class LRouterAnologyApplication extends AnologyApplication {
     protected void init(){
         //初始化远程路由
         RemoteRouter.getInstance(mApplication);
-        //注册所有本地路由service
-        mApplication.regiterLocalRouterService();
     }
 }

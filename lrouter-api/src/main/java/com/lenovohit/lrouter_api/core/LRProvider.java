@@ -16,7 +16,6 @@ public abstract class LRProvider {
     public LRProvider(){
         ProviderInject.injectProvider(this);
         mActions = new HashMap<>();
-        registerActions();
     }
 
     public void registerAction(String actionName,LRAction action){
@@ -33,6 +32,4 @@ public abstract class LRProvider {
     public boolean isValid(){
         return mValid;
     }
-
-    protected abstract void registerActions();
 }
