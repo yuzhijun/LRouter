@@ -7,13 +7,13 @@
 #### 功能：
 1.**支持跨进程访问其他模块**<br>							
 2.**支持跨进程请求拦截**<br>								
-3.**支持功能类注解注入**<br>							
+3.**支持功能类注解注入**<br>	
+4.**支持Intent跳转拦截**<br>
 
 #### TODO：
-1.同模块间请求拦截<br>
-2.多模块间频繁数据请求<br>
-3.注解注入修改成编译期反射<br>
-4.请求路由的管理<br>
+1.多模块间频繁数据请求<br>
+2.注解注入修改成编译期反射<br>
+3.请求路由的管理<br>
 
 
 ## 1.开始使用
@@ -61,6 +61,10 @@ public class MainAnologyApplication extends AnologyApplication {
 ```
 @Provider(name = "main")
 public class MainProvider extends LRProvider {
+  @Override
+    public void registerAction(String actionName, LRAction action) {//历史原因这个需要重写下
+       super.registerAction(actionName, action);
+    }
 }
 ```
 其中@Provider注解中name字段是根据自己喜好可以随意取得，但是尽量取一个有意义的名字
@@ -77,7 +81,8 @@ public class MainAction extends LRAction {//动作的执行
 ```
  @Override
     public boolean needAsync(Context context, LRouterRequest requestData) {
-        return false;
+
+return false;
     }
 ```
 这个标识标志了是异步访问还是同步访问
@@ -118,6 +123,14 @@ public class AppInterceptor extends AopInterceptor {
 ```
 其中enterRequestIntercept即为进入请求方法前执行，exitRequestIntercept即为请求方法后执行，拦截器可以创建多个
 
+### 1.9.Intent请求拦截器
+
+想要拦截activity跳转到另外activity请求则可以通过继承StartupInterceptor，然后用@IntentInterceptor注解
+```
+@IntentInterceptor
+public class StartInterceptor extends StartupInterceptor {
+}
+```
 ## 2.调用方法
 
 ### 2.1.模块内无跨进程同步调用方法
