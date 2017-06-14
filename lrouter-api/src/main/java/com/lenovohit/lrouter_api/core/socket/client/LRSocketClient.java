@@ -103,4 +103,64 @@ public class LRSocketClient {
     public synchronized Selector getSelector() {
         return this.selector;
     }
+
+    /**
+     * 服务器是否关闭，通过发送一个socket信息
+     *
+     * @return
+     */
+    public boolean canConnectToServer() {
+        try {
+            if (socketChannel != null) {
+                socketChannel.socket().sendUrgentData(0xff);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 关闭socket 重新连接
+     * @return
+     */
+    public boolean reConnect() {
+        closeTCPSocket();
+        try {
+            init();
+            init = true;
+        } catch (IOException e) {
+            init = false;
+            e.printStackTrace();
+        }
+        catch (Exception e) {
+            init = false;
+            e.printStackTrace();
+        }
+        return init;
+    }
+
+    /**
+     * 关闭socket
+     */
+    public void closeTCPSocket() {
+        try {
+            if (socketChannel != null) {
+                socketChannel.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (selector != null) {
+                selector.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

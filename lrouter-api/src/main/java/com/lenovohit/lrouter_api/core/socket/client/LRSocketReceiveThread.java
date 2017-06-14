@@ -24,7 +24,7 @@ public class LRSocketReceiveThread extends Thread{
     private LRSocketClient mSocketClient;
     private IRequestCallBack mRequestCallBack;
 
-    public LRSocketReceiveThread(String hostIP,int hostPort,LRSocketClient socketClient,IRequestCallBack requestCallBack){
+    public LRSocketReceiveThread(LRSocketClient socketClient,IRequestCallBack requestCallBack){
         this.mRequestCallBack = requestCallBack;
         this.mSocketClient = socketClient;
         NetManager.getInstance().init(LRouterAppcation.getInstance());

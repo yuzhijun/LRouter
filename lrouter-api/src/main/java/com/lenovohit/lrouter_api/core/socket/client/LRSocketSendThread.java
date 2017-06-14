@@ -18,7 +18,7 @@ public class LRSocketSendThread extends Thread{
     private List<MsgObject> sendMsgQueue;
     private LRSocketClient mLRSocketClient;
 
-    public LRSocketSendThread(String hostIP,int hostPort,LRSocketClient socketClient){
+    public LRSocketSendThread(LRSocketClient socketClient){
         this.mLRSocketClient = socketClient;
         sendMsgQueue = new CopyOnWriteArrayList<>();
     }
