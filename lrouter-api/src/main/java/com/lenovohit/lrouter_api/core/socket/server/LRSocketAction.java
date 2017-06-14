@@ -24,8 +24,6 @@ public abstract class LRSocketAction<T> extends LRAction<T> {
     private ServerSocketChannel listenerChannel;
     // 缓冲区大小
     private static final int BufferSize = 1024;
-    // 本地监听端口
-    private static final int ListenPort = 10000;
 
     public LRSocketAction(){
         ActionInject.injectAction(this);
@@ -47,7 +45,7 @@ public abstract class LRSocketAction<T> extends LRAction<T> {
             listenerChannel.configureBlocking(false);
             listenerChannel.socket().setReuseAddress(true);
             // 与本地端口绑定
-            listenerChannel.socket().bind(new InetSocketAddress(ListenPort));
+            listenerChannel.socket().bind(new InetSocketAddress(socketPort()));
             // 将选择器绑定到监听信道,只有非阻塞信道才可以注册选择器.并在注册过程中指出该信道可以进行Accept操作
             listenerChannel.register(selector, SelectionKey.OP_ACCEPT);
             // 创建一个处理协议的实现类,由它来具体操作
@@ -84,6 +82,17 @@ public abstract class LRSocketAction<T> extends LRAction<T> {
             e.printStackTrace();
         }catch (Exception e){
             e.printStackTrace();
+        }finally {
+            try{
+                if (null != selector){
+                    selector.close();
+                }
+                if (null != listenerChannel){
+                    listenerChannel.close();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -98,4 +107,5 @@ public abstract class LRSocketAction<T> extends LRAction<T> {
     }
 
     public abstract String socketInvoke(String receiveStr);
+    public abstract int socketPort();
 }

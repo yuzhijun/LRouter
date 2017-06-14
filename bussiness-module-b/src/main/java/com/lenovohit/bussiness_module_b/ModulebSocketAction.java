@@ -1,13 +1,13 @@
-package com.lenovohit.lrouter;
+package com.lenovohit.bussiness_module_b;
 
 import com.lenovohit.lrouter_api.annotation.ioc.Action;
 import com.lenovohit.lrouter_api.core.socket.server.LRSocketAction;
 
 /**
- * Created by yuzhijun on 2017/6/13.
+ * Created by yuzhijun on 2017/6/14.
  */
-@Action(name = "socketAction",provider = "main")
-public class SocketAction extends LRSocketAction{
+@Action(name = "ModulebSocketAction",provider = "ModuleBProvider")
+public class ModulebSocketAction extends LRSocketAction {
     @Override
     public String socketInvoke(String receiveStr) {
         return receiveStr;
@@ -15,6 +15,6 @@ public class SocketAction extends LRSocketAction{
 
     @Override
     public int socketPort() {
-        return 10000;
+        return 10001;
     }
 }

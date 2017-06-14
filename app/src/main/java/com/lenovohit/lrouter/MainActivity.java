@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 LocalRouter.getInstance(LRouterAppcation.getInstance())
-                        .socketNavigation("Hello-socket".getBytes(), 10000, new IRequestCallBack() {
+                        .socketNavigation("Hello-socket".getBytes(), 10001, new IRequestCallBack() {
                             @Override
                             public void onSuccess(final String result) {
                                 Message message = new Message();
