@@ -43,7 +43,6 @@ public abstract class LRSocketAction<T> extends LRAction<T> {
             listenerChannel = ServerSocketChannel.open();
             // 设置为非阻塞模式
             listenerChannel.configureBlocking(false);
-            listenerChannel.socket().setReuseAddress(true);
             // 与本地端口绑定
             listenerChannel.socket().bind(new InetSocketAddress(socketPort()));
             // 将选择器绑定到监听信道,只有非阻塞信道才可以注册选择器.并在注册过程中指出该信道可以进行Accept操作

@@ -152,10 +152,6 @@ public class LRSocketClient {
             if (socketChannel != null) {
                 socketChannel.close();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             if (selector != null) {
                 selector.close();
             }
