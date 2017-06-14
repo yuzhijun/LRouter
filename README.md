@@ -9,11 +9,11 @@
 2.**支持跨进程请求拦截**<br>								
 3.**支持功能类注解注入**<br>	
 4.**支持Intent跳转拦截**<br>
+5.**模块间频繁通讯socket**<br>
 
 #### TODO：
-1.多模块间频繁数据请求<br>
-2.注解注入修改成编译期反射<br>
-3.请求路由的管理<br>
+1.注解注入修改成编译期反射<br>
+2.请求路由的管理<br>
 
 
 ## 1.开始使用
@@ -131,6 +131,23 @@ public class AppInterceptor extends AopInterceptor {
 public class StartInterceptor extends StartupInterceptor {
 }
 ```
+### 2.0.创建支持socket通信的Action
+某些需求需要频繁通信，则需要创建action继承SocketAction
+```
+@Action(name = "ModulebSocketAction",provider = "ModuleBProvider")
+public class ModulebSocketAction extends LRSocketAction {
+    @Override
+    public String socketInvoke(String receiveStr) {
+        return receiveStr;
+    }
+
+    @Override
+    public int socketPort() {
+        return 10001;
+    }
+}
+```
+其中name为action的名字根据自己喜欢定，provider为模块唯一的provider
 ## 2.调用方法
 
 ### 2.1.模块内无跨进程同步调用方法
@@ -197,6 +214,26 @@ RxLocalLRouter.getInstance(LRouterAppcation.getInstance())
                                 }
                             });
 ```
+### 2.4.socket方式访问
+如果采用socket方式调用则方法如下
+```
+    LocalRouter.getInstance(LRouterAppcation.getInstance())
+                        .socketNavigation("Hello-socket".getBytes(), 10001, new IRequestCallBack() {
+                            @Override
+                            public void onSuccess(final String result) {
+                                Message message = new Message();
+                                message.obj = result;
+                                message.what =1;
+                                handler.sendMessage(message);
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+
+                            }
+                        });
+```
+其中第一个参数为要发送的消息，第二个参数要访问的端口号，最后是回调（但是回调回来是在线程中不是在主线程）
 ## 3.后续工作
   
   文档补充与功能实现均还在路上，期待进一步...
