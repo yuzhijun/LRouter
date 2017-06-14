@@ -50,4 +50,13 @@
         tools:layout_editor_absoluteY="28dp"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Socket通讯"
+        tools:layout_editor_absoluteY="28dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 </LinearLayout>

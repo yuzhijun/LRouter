@@ -2,6 +2,7 @@ package com.lenovohit.lrouter;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -19,13 +20,14 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
-    private Handler handler = new Handler();
+    private Handler handler;
 
     private Button button1;
     private Button button2;
     private Button button3;
     private Button button4;
     private Button button5;
+    private Button button6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +39,18 @@ public class MainActivity extends AppCompatActivity {
         button3 = (Button) findViewById(R.id.button3);
         button4 = (Button) findViewById(R.id.button4);
         button5 = (Button) findViewById(R.id.button5);
+        button6 = (Button) findViewById(R.id.button6);
 
         initEvent();
     }
 
     private void initEvent(){
+        handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                Toast.makeText(MainActivity.this,(String)msg.obj,Toast.LENGTH_SHORT).show();
+            }
+        };
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,6 +158,27 @@ public class MainActivity extends AppCompatActivity {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+            }
+        });
+
+        button6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LocalRouter.getInstance(LRouterAppcation.getInstance())
+                        .socketNavigation("Hello-socket".getBytes(), 10000, new IRequestCallBack() {
+                            @Override
+                            public void onSuccess(final String result) {
+                                Message message = new Message();
+                                message.obj = result;
+                                message.what =1;
+                                handler.sendMessage(message);
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+
+                            }
+                        });
             }
         });
     }

@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import com.lenovohit.lrouter_api.IRemoteRouterAIDL;
 import com.lenovohit.lrouter_api.base.LRouterAppcation;
 import com.lenovohit.lrouter_api.core.callback.IRequestCallBack;
+import com.lenovohit.lrouter_api.core.socket.LRSocketThreadManager;
 import com.lenovohit.lrouter_api.exception.LRException;
 import com.lenovohit.lrouter_api.intercept.ioc.Navigation;
 import com.lenovohit.lrouter_api.utils.DefaultPoolExecutor;
@@ -19,6 +20,7 @@ import com.lenovohit.lrouter_api.utils.LRLoggerFactory;
 import com.lenovohit.lrouter_api.utils.ProcessUtil;
 
 import java.lang.ref.SoftReference;
+import java.net.InetAddress;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -40,6 +42,8 @@ public class LocalRouter {
     private static ExecutorService threadPool = null;
     //本地路由持有各个模块所有的provider,可能有多个进程localRouter访问所以用ConcurrentHashMap
     private ConcurrentHashMap<String,LRProvider> mProviderHashmap = null;
+    //用于保存对应端口的Manager
+    private ConcurrentHashMap<Integer,LRSocketThreadManager> mSocktManagerHashMap = null;
     //用于跨进程访问远程路由
     public IRemoteRouterAIDL mRemoteRouterAIDL;
     //空的task
@@ -48,6 +52,7 @@ public class LocalRouter {
     protected LocalRouter(LRouterAppcation context) {
         mLRouterAppcation = context;
         mProviderHashmap = new ConcurrentHashMap<>();
+        mSocktManagerHashMap = new ConcurrentHashMap<>();
         mProcessName = ProcessUtil.getProcessName(context, ProcessUtil.getMyProcessId());
         if (mLRouterAppcation.needMultipleProcess() && !RemoteRouter.PROCESS_NAME.equals(mProcessName)) {
             connect2RemoteRouter(mProcessName);
@@ -177,6 +182,28 @@ public class LocalRouter {
             }
         }
         return futureTask;
+    }
+
+    /**
+     * 通过socket访问
+     * */
+    public synchronized void socketNavigation(final byte[] msg, final int hostPort, final IRequestCallBack requestCallBack){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    LRSocketThreadManager socketThreadManager = mSocktManagerHashMap.get(hostPort);
+                    if (null == socketThreadManager){
+                        InetAddress ia = InetAddress.getLocalHost();
+                        socketThreadManager = new LRSocketThreadManager(ia.getHostAddress(),hostPort,requestCallBack);
+                        mSocktManagerHashMap.put(hostPort,socketThreadManager);
+                    }
+                    socketThreadManager.sendMsg(msg,mHandler);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     //检查远程服务是否连接

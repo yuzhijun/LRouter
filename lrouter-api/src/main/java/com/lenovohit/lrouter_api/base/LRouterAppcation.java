@@ -50,8 +50,10 @@ public abstract class LRouterAppcation extends Application{
                     setAnologyApplicaiton();
                     //调用各类application的生命周期onCreate
                     invokeOnCreate();
-                    //扫描所有类注入带注解的action,provider,interceptor等类
-                     PackageScanner.scan(mInstance);
+                    if (RemoteRouter.PROCESS_NAME.equalsIgnoreCase(ProcessUtil.getProcessName(this, ProcessUtil.getMyProcessId()))){
+                        //扫描所有类注入带注解的action,provider,interceptor等类
+                        PackageScanner.scan(mInstance);
+                    }
 //                }
 //            }).start();
         }catch (Exception e){
