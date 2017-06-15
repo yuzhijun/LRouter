@@ -1,4 +1,4 @@
-## 项目路由框架(详细指导文档敬请期待...)
+## Android项目路由框架
 ![Logo](https://github.com/yuzhijun/LRouter/blob/master/app/src/main/logo/app_logo.png)
 ```
 此框架是多进程多模块支持拦截,注解用法的框架
