@@ -7,14 +7,13 @@
 #### 功能：
 1.**支持跨进程访问其他模块**<br>							
 2.**支持跨进程请求拦截**<br>								
-3.**支持功能类注解注入**<br>	
+3.**支持功能类注解注入(AnnotationProcessor方式)**<br>	
 4.**支持Intent跳转拦截**<br>
 5.**模块间频繁通讯socket**<br>
 
 #### TODO：
-1.注解注入修改成编译期反射<br>
-2.请求路由的管理<br>
-3.请求链接为uri则直接跳转<br>
+1.请求路由的管理<br>
+2.请求链接为uri则直接跳转<br>
 
 ## 1.开始使用
 
@@ -61,10 +60,7 @@ public class MainAnologyApplication extends AnologyApplication {
 ```
 @Provider(name = "main")
 public class MainProvider extends LRProvider {
-  @Override
-    public void registerAction(String actionName, LRAction action) {//历史原因这个需要重写下
-       super.registerAction(actionName, action);
-    }
+ 
 }
 ```
 其中@Provider注解中name字段是根据自己喜好可以随意取得，但是尽量取一个有意义的名字
