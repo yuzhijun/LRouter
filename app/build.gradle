@@ -30,4 +30,6 @@ dependencies {
     compile project(':bussiness-module-b')
     compile project(':basemodel')
     compile project(':rxlrouter-api')
+    compile project(':lrouter-annotation')
+    annotationProcessor project(':lrouter-compiler')
 }

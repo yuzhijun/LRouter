@@ -1,6 +1,6 @@
 package com.lenovohit.lrouter;
 
-import com.lenovohit.lrouter_api.annotation.ioc.Provider;
+import com.lenovohit.annotation.Provider;
 import com.lenovohit.lrouter_api.core.LRAction;
 import com.lenovohit.lrouter_api.core.LRProvider;
 

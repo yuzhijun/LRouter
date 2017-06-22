@@ -28,4 +28,6 @@ dependencies {
     //module依赖路由module
     compile project(':lrouter-api')
     compile project(':basemodel')
+    compile project(':lrouter-annotation')
+    annotationProcessor project(':lrouter-compiler')
 }

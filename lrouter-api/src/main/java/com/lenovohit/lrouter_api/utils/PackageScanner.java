@@ -2,23 +2,7 @@ package com.lenovohit.lrouter_api.utils;
 
 import android.content.Context;
 
-import com.lenovohit.lrouter_api.annotation.ApplicationInject;
-import com.lenovohit.lrouter_api.annotation.IntentInterceptInject;
-import com.lenovohit.lrouter_api.annotation.InterceptInject;
-import com.lenovohit.lrouter_api.annotation.ServiceInject;
-import com.lenovohit.lrouter_api.annotation.ioc.Action;
-import com.lenovohit.lrouter_api.annotation.ioc.Application;
-import com.lenovohit.lrouter_api.annotation.ioc.IntentInterceptor;
-import com.lenovohit.lrouter_api.annotation.ioc.Interceptor;
-import com.lenovohit.lrouter_api.annotation.ioc.Provider;
-import com.lenovohit.lrouter_api.annotation.ioc.Service;
-import com.lenovohit.lrouter_api.base.AnologyApplication;
 import com.lenovohit.lrouter_api.core.InjectorPriorityWrapper;
-import com.lenovohit.lrouter_api.core.LRAction;
-import com.lenovohit.lrouter_api.core.LRProvider;
-import com.lenovohit.lrouter_api.core.LocalRouterService;
-import com.lenovohit.lrouter_api.intercept.AopInterceptor;
-import com.lenovohit.lrouter_api.intercept.StartupInterceptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,28 +30,14 @@ public class PackageScanner {
             Enumeration<String> entries = dex.entries();
             while (entries.hasMoreElements()) {
                 String entryName = entries.nextElement();
-                if (entryName.contains("com.")){//过滤掉系统的类
+                if (entryName.contains("com.lenovohit")){//过滤掉系统的类
                     Class<?> entryClass = Class.forName(entryName, false,classLoader);
-                    if (null != entryClass.getAnnotation(Provider.class)){//如果有这些个注解则都返回
-                        if (LRProvider.class.isAssignableFrom(entryClass)){
-                            clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.PROVIDER_PRIORITY,entryClass));
-                        }
-                    }else if ( null != entryClass.getAnnotation(Action.class)){
-                        if (LRAction.class.isAssignableFrom(entryClass)){
-                            clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.ACTION_PRIORITY,entryClass));
-                        }
-                    }else if( null != entryClass.getAnnotation(Interceptor.class)){
-                        InterceptInject.interceptorInject((Class<? extends AopInterceptor>) entryClass);
-                    }else if(null != entryClass.getAnnotation(IntentInterceptor.class)){
-                        IntentInterceptInject.interceptorInject((Class<? extends StartupInterceptor>) entryClass);
-                    }else if(null != entryClass.getAnnotation(Service.class)){
-                        if (LocalRouterService.class.isAssignableFrom(entryClass)){//判断类型是否正确
-                            ServiceInject.injectService((Class<? extends LocalRouterService>) entryClass);
-                        }
-                    }else if(null != entryClass.getAnnotation(Application.class)){
-                        if (AnologyApplication.class.isAssignableFrom(entryClass)){
-                            ApplicationInject.injectApplicaiton((Class<? extends AnologyApplication>) entryClass);
-                        }
+                    if (entryName.contains("Provider$$Inject")){
+                        clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.PROVIDER_PRIORITY,entryClass));
+                    }else if (entryName.contains("Action$$Inject")){
+                        clazzs.add(new InjectorPriorityWrapper(InjectorPriorityWrapper.ACTION_PRIORITY,entryClass));
+                    }else if(entryName.contains("$$Inject")){
+                        ((Injector)entryClass.newInstance()).inject();
                     }
                 }
             }
@@ -77,7 +47,7 @@ public class PackageScanner {
                 Collections.sort(clazzs);
                 for (int i = 0; i < clazzs.size(); i ++){
                     InjectorPriorityWrapper clazz = clazzs.get(i);
-                    clazz.mClass.newInstance();
+                    ((Injector)clazz.mClass.newInstance()).inject();
                 }
             }
         }catch (Exception e){

@@ -2,7 +2,7 @@ package com.lenovohit.lrouter;
 
 import android.content.Intent;
 
-import com.lenovohit.lrouter_api.annotation.ioc.IntentInterceptor;
+import com.lenovohit.annotation.IntentInterceptor;
 import com.lenovohit.lrouter_api.intercept.StartupInterceptor;
 
 /**

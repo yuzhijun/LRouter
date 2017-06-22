@@ -64,6 +64,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'org.aspectj:aspectjrt:1.8.1'
+    compile project(':lrouter-annotation')
 }
 
 android.libraryVariants.all { variant ->

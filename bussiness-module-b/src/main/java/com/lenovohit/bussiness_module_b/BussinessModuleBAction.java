@@ -3,8 +3,8 @@ package com.lenovohit.bussiness_module_b;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.lenovohit.annotation.Action;
 import com.lenovohit.basemodel.User;
-import com.lenovohit.lrouter_api.annotation.ioc.Action;
 import com.lenovohit.lrouter_api.core.LRAction;
 import com.lenovohit.lrouter_api.core.LRActionResult;
 import com.lenovohit.lrouter_api.core.LRouterRequest;

@@ -1,6 +1,6 @@
 package com.lenovohit.lrouter;
 
-import com.lenovohit.lrouter_api.annotation.ioc.Action;
+import com.lenovohit.annotation.Action;
 import com.lenovohit.lrouter_api.core.socket.server.LRSocketAction;
 
 /**

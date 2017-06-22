@@ -1,6 +1,6 @@
 package com.lenovohit.bussiness_module_b;
 
-import com.lenovohit.lrouter_api.annotation.ioc.Action;
+import com.lenovohit.annotation.Action;
 import com.lenovohit.lrouter_api.core.socket.server.LRSocketAction;
 
 /**

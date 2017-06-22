@@ -1,6 +1,6 @@
 package com.lenovohit.bussiness_module_b;
 
-import com.lenovohit.lrouter_api.annotation.ioc.Application;
+import com.lenovohit.annotation.Application;
 import com.lenovohit.lrouter_api.base.AnologyApplication;
 
 /**

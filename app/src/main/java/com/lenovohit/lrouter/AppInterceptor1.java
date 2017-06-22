@@ -1,6 +1,6 @@
 package com.lenovohit.lrouter;
 
-import com.lenovohit.lrouter_api.annotation.ioc.Interceptor;
+import com.lenovohit.annotation.Interceptor;
 import com.lenovohit.lrouter_api.intercept.AopInterceptor;
 
 /**

@@ -2,7 +2,6 @@ package com.lenovohit.lrouter_api.core.socket.server;
 
 import android.content.Context;
 
-import com.lenovohit.lrouter_api.annotation.ActionInject;
 import com.lenovohit.lrouter_api.core.LRAction;
 import com.lenovohit.lrouter_api.core.LRActionResult;
 import com.lenovohit.lrouter_api.core.LRouterRequest;
@@ -26,7 +25,6 @@ public abstract class LRSocketAction<T> extends LRAction<T> {
     private static final int BufferSize = 1024;
 
     public LRSocketAction(){
-        ActionInject.injectAction(this);
         LocalRouter.getThreadPool().execute(new Runnable() {
             @Override
             public void run() {
