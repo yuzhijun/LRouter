@@ -20,8 +20,11 @@
 ### 1.1.在项目中集成
 
 ```
-首先我们需要在主APP工程里面和module工程里面都添加进依赖库工程（完善版本之后会上传至jcenter）
+1.首先我们需要在主APP工程里面和module工程里面都添加进依赖库工程（完善版本之后会上传至jcenter）
 lrouter-api（多进程多模块框架库）和rxlrouter-api（扩展框架支持rxjava）
+2.然后在主APP工程和module工程里面添加AnnotationProcessor的依赖
+    compile project(':lrouter-annotation')
+    annotationProcessor project(':lrouter-compiler')
 ```
 
 ### 1.2.创建自定义applicaiton
